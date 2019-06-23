@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pwd.allen.dao.DepartmentDao">
+    <select id="getById" resultType="pwd.allen.entity.Department">
+    select * from db_dept where id = #{id}
+    </select>
+
+    <resultMap id="deptMap" type="pwd.allen.entity.Department">
+        <id column="did" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <collection property="users" ofType="pwd.allen.entity.User">
+            <id property="id" column="id"/>
+            <result column="user_name" property="userName"/>
+            <result column="status" property="status"/>
+            <result column="age" property="age"/>
+            <result column="create_at" property="createAt"/>
+        </collection>
+    </resultMap>
+    <select id="getDeptAndUsers" resultMap="deptMap">
+    SELECT d.id did, d.`dept_name` dept_name, u.* FROM db_dept d LEFT JOIN db_user u ON d.id=u.`dept_id` WHERE 1=1
+    <if test="_parameter != null and _parameter != ''">
+        and d.id=#{id}
+    </if>
+    </select>
+
+    <resultMap id="deptMapStep" type="pwd.allen.entity.Department">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <!-- 如果关联的字段有多个，则用map格式关联，如column="{key1=val1,key2=val2}"，key1和key2就可以在getUsers的sql里引用 -->
+        <collection property="users" select="pwd.allen.dao.UserDao.getUsers" column="{deptId=id,col=dept_name}" fetchType="lazy">
+            <id property="id" column="id"/>
+            <result column="user_name" property="userName"/>
+            <result column="status" property="status"/>
+            <result column="age" property="age"/>
+            <result column="create_at" property="createAt"/>
+        </collection>
+    </resultMap>
+    <select id="getDeptAndUsersStep" resultMap="deptMapStep">
+    SELECT * FROM db_dept WHERE id=#{id}
+    </select>
+
+    <resultMap id="deptMapStep2" type="pwd.allen.entity.Department">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <!-- 鉴别器 可以动态修改封装规则
+        column指定判定的列名
+        javaType 列名对应的java类型
+         -->
+        <discriminator javaType="int" column="id">
+            <!-- 如果id=1，则关联查询出users
+            resultType 指定封装的类型,不能缺少，可以换成resultMap
+             -->
+            <case value="1" resultType="pwd.allen.entity.Department">
+                <!-- 如果关联的字段有多个，则用map格式关联，如column="{key1=val1,key2=val2}" -->
+                <collection property="users" select="pwd.allen.dao.UserDao.getUsersByDeptId" column="id">
+                    <id property="id" column="id"/>
+                    <result column="user_name" property="userName"/>
+                    <result column="status" property="status"/>
+                    <result column="age" property="age"/>
+                    <result column="create_at" property="createAt"/>
+                </collection>
+            </case>
+            <!-- 如果id=2，则把id赋值给deptName
+             -->
+            <case value="2" resultType="pwd.allen.entity.Department">
+                <result column="id" property="deptName"/>
+            </case>
+        </discriminator>
+    </resultMap>
+    <select id="getDeptAndUsersStep2" resultMap="deptMapStep2">
+    SELECT * FROM db_dept WHERE id=#{id}
+    </select>
+
+    <insert id="addDepts">
+        insert into db_dept(dept_name)
+        values
+        <foreach collection="depts" item="dept" separator=",">
+            (#{dept.deptName})
+        </foreach>
+    </insert>
+
+    <insert id="addDepts" databaseId="oracle">
+        insert into pwd_dept
+        select SEQ_DEPT.nextval, dept_name from
+        <foreach collection="depts" item="dept" separator="union all" open="(" close=")">
+            select #{dept.deptName} dept_name from dual
+        </foreach>
+    </insert>
+
+</mapper>
