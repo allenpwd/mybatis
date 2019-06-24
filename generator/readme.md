@@ -1,0 +1,2 @@
+maven方式运行
+mvn mybatis-generator:generate
