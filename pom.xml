@@ -24,12 +24,12 @@
             <scope>runtime</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.oracle/ojdbc -->
-        <dependency>
-            <groupId>ojdbc</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>14</version>
-            <scope>runtime</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>ojdbc</groupId>-->
+            <!--<artifactId>ojdbc</artifactId>-->
+            <!--<version>14</version>-->
+            <!--<scope>runtime</scope>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>junit</groupId>
