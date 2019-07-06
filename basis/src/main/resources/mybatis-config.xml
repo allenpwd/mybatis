@@ -10,7 +10,7 @@
         <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/>
         <property name="org.apache.ibatis.parsing.PropertyParser.default-value-separator" value=":"/>
     </properties>
-    
+
     <settings>
         <!--开启驼峰命名自动转换 默认为false-->
         <setting name="mapUnderscoreToCamelCase" value="true"/>
@@ -28,7 +28,6 @@
         <setting name="cacheEnabled" value="true"/>
     </settings>
 
-
     <typeAliases>
         <!--
         别名处理器：为某个java类型起别名，不区分大小写
@@ -44,6 +43,12 @@
         <package name="pwd.allen.entity"></package>
     </typeAliases>
 
+    <!-- 注册插件 -->
+    <plugins>
+        <plugin interceptor="pwd.allen.plugin.MyPlugin">
+            <property name="name" value="allen"/>
+        </plugin>
+    </plugins>
     <environments default="mysql">
 
         <environment id="mysql">

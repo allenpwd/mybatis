@@ -1,12 +1,13 @@
 package pwd.allen.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author pwd
  * @create 2018-07-25 9:39
  **/
-public class Department {
+public class Department implements Serializable {
     private Integer id;
     private String deptName;
     private List<User> users;

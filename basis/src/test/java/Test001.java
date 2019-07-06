@@ -170,5 +170,17 @@ public class Test001 {
         user = sqlSession1.getMapper(UserDao.class).getById(1);
     }
 
+    @Test
+    public void pwdTest() {
+        Map map = new HashMap();
+        map.put("name", "soisdf");
+        map.put("age", 23);
+        List list = new ArrayList();
+        list.add("abc");
+        map.put("list", list);
+        String json = map.toString();
+        System.out.println(json);
+        System.out.println(json.matches("[\\{\\}\\w, ]+"));
+    }
 
 }
