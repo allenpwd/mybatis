@@ -45,11 +45,16 @@
 
     <!-- 注册插件 -->
     <plugins>
+        <!--分页-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+
+        </plugin>
+        <!--自定义插件-->
         <plugin interceptor="pwd.allen.plugin.MyPlugin">
             <property name="name" value="allen"/>
         </plugin>
     </plugins>
-    <environments default="mysql">
+    <environments default="oracle">
 
         <environment id="mysql">
             <transactionManager type="JDBC"/>

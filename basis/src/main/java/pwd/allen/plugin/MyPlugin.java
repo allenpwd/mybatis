@@ -16,7 +16,7 @@ import java.util.Properties;
  * 在四大对象创建的时候，每个创建出来的对像都经过interceptorChain.pluginAll(parameterHandler);
  * 1.获取到所有的Interceptor（拦截器，实现Interceptor接口）
  * 2.调用interceptor.plugin(target);返回target包装后的对象
- * 插件机制就是为目标对象创建代理对象，AOP
+ * 插件机制就是为目标对象创建代理对象（AOP），多个拦截器会按照插件配置顺序形成多层代理，
  *
  * 插件编写：
  * 1.编写Interceptor的实现类

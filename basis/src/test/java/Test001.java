@@ -1,4 +1,10 @@
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -11,6 +17,7 @@ import pwd.allen.dao.UserDao;
 import pwd.allen.dao.UserDaoAnnotation;
 import pwd.allen.entity.Department;
 import pwd.allen.entity.User;
+import pwd.allen.util.OraclePage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,6 +115,7 @@ public class Test001 {
 
 //        List<User> users = userDao.getUsersByDeptId(1);
 //        System.out.println(users);
+
     }
 
     @Test
@@ -144,18 +152,6 @@ public class Test001 {
         logger.info("user={}", user);
     }
 
-    @Test
-    public void test2() throws SQLException {
-        Connection connection = sqlSession.getConnection();
-        String sql = "select * from db_user where user_NAME=?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, "潘伟丹");
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            System.out.println(rs.getString("USER_NAME"));
-        }
-    }
-
     /**
      * 二级缓存 需要设置cacheEnabled=true并在mapper里配置cache标签，实体类需要能序列化
      */
@@ -170,17 +166,83 @@ public class Test001 {
         user = sqlSession1.getMapper(UserDao.class).getById(1);
     }
 
+    /**
+     * 使用SystemMetaObject工具操作对象属性
+     */
     @Test
-    public void pwdTest() {
-        Map map = new HashMap();
-        map.put("name", "soisdf");
-        map.put("age", 23);
-        List list = new ArrayList();
-        list.add("abc");
-        map.put("list", list);
-        String json = map.toString();
-        System.out.println(json);
-        System.out.println(json.matches("[\\{\\}\\w, ]+"));
+    public void testMetaObject() {
+        User user = new User();
+        MetaObject metaObject = SystemMetaObject.forObject(user);
+        metaObject.setValue("userName", "abc");
+        metaObject.setValue("dept.deptName", "部门名称");
+        System.out.println(metaObject.getValue("dept.deptName"));
+    }
+
+    /**
+     * 使用PageHelper实现分页
+     * 使用方式：
+     * 1.引入pageHelper
+     * 2.配置PageInterceptor拦截器至全局配置文件
+     */
+    @Test
+    public void testPageHelper() {
+
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        Page<Object> page = PageHelper.startPage(1, 2);
+        List<User> users = userDao.getUsers(null);
+        logger.info("users={}", users);
+
+        //分页数据可以从startPage返回的对象拿，也可以用PageInfo拿
+        logger.info("page={}", page);
+
+        PageInfo<User> pageInfo = new PageInfo<>(users);
+        logger.info("pageInfo={}", pageInfo);
+    }
+
+    /**
+     * 批量插入
+     */
+    @Test
+    public void testInsertBatch() {
+
+        //批量 预编译一次、sql请求一次、设置参数10000次
+        //如果是非批量模式，则每次insert都发请求一次
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        long mills = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            User user = new User();
+            user.setCreateAt(new Date());
+            user.setAge(i);
+            user.setUserName(UUID.randomUUID().toString().substring(0, 10));
+            userDao.insertUser(user);
+        }
+        logger.info("耗时{}", System.currentTimeMillis() - mills);
+    }
+
+    /**
+     * 调用存储过程，利用oracle游标返回分页列表数据
+     */
+    @Test
+    public void testOracleProcedure() {
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        OraclePage page = new OraclePage();
+        page.setStart(1);
+        page.setEnd(2);
+        userDao.getPageByProcedure(page);
+        logger.info("total={}, data={}", page.getTotal(), page.getData());
+    }
+
+    @Test
+    public void pwdTest() throws SQLException {
+        Connection connection = sqlSession.getConnection();
+        String sql = "select * from db_user where user_NAME=?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, "潘伟丹");
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            System.out.println(rs.getString("USER_NAME"));
+        }
     }
 
 }

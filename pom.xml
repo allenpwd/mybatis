@@ -48,8 +48,15 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.2</version>
         </dependency>
-
-
+        <!-- 远程仓库没有，所以要将jar打入本地仓库中
+        mvn install:install-file -Dfile=ojdbc-7.0.jar -DgroupId=oracle -DartifactId=ojdbc -Dversion=7.0 -Dpackaging=jar
+         -->
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>7.0</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
 </project>

@@ -3,6 +3,7 @@ package pwd.allen.dao;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 import pwd.allen.entity.User;
+import pwd.allen.util.OraclePage;
 
 import java.util.List;
 import java.util.Map;
@@ -37,4 +38,8 @@ public interface UserDao {
 
     public Integer addUser(User user);
     public Integer addUsers(List<User> users);
+
+    public List<User> getUsers(Map<String, Object> mapParam);
+
+    public void getPageByProcedure(OraclePage page);
 }

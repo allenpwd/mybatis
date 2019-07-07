@@ -129,4 +129,25 @@
         values(#{id}, #{userName,jdbcType=NULL}, #{age}, #{status},#{createAt}, #{dept.id})
     </insert>
 
+    <!-- public void getPageByProcedure();
+	1、使用select标签定义调用存储过程
+	2、statementType="CALLABLE":表示要调用存储过程
+	3、{call procedure_name(params)}
+	-->
+    <select id="getPageByProcedure" statementType="CALLABLE" databaseId="oracle" useCache="false">
+		{call my_procedure(
+			#{start,mode=IN,jdbcType=INTEGER},
+			#{end,mode=IN,jdbcType=INTEGER},
+			#{total,mode=OUT,jdbcType=INTEGER},
+			#{data,mode=OUT,jdbcType=CURSOR,javaType=ResultSet,resultMap=PageData}
+		)}
+	</select>
+    <resultMap type="pwd.allen.entity.User" id="PageData">
+        <id column="ID" property="id"/>
+        <result column="NAME" property="userName"/>
+        <result column="CREATEDATE" property="createAt"/>
+        <result column="age" property="age"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
 </mapper>
