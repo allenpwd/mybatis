@@ -36,6 +36,7 @@
 
     <mybatis:scan base-package="pwd.allen.mybatis.dao"/>
 
+    <!--mapper接口扫描-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="pwd.allen.mybatis.dao"/>
     </bean>
