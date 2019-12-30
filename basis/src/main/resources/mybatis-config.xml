@@ -54,7 +54,7 @@
             <property name="name" value="allen"/>
         </plugin>
     </plugins>
-    <environments default="oracle">
+    <environments default="mysql">
 
         <environment id="mysql">
             <transactionManager type="JDBC"/>

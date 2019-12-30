@@ -195,7 +195,7 @@ public class Test001 {
         //分页数据可以从startPage返回的对象拿，也可以用PageInfo拿
         logger.info("page={}", page);
 
-        PageInfo<User> pageInfo = new PageInfo<>(users);
+        PageInfo<User> pageInfo = new PageInfo<User>(users);
         logger.info("pageInfo={}", pageInfo);
     }
 
