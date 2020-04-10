@@ -4,6 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
+    <properties>
+        <property name="myProperty" value="abc"/>
+    </properties>
+
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <!--<setting name="jdbcTypeForNull" value="NULL"/>-->
