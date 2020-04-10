@@ -17,6 +17,15 @@ public class User implements Serializable {
     private int status;
     private Date createAt;
     private Department dept;
+    private byte[] msg;
+
+    public byte[] getMsg() {
+        return msg;
+    }
+
+    public void setMsg(byte[] msg) {
+        this.msg = msg;
+    }
 
     public String getUserName() {
         return userName;

@@ -42,4 +42,6 @@ public interface UserDao {
     public List<User> getUsers(Map<String, Object> mapParam);
 
     public void getPageByProcedure(OraclePage page);
+
+    public int update(User user);
 }

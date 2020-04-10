@@ -21,6 +21,7 @@ import pwd.allen.util.OraclePage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -133,6 +134,27 @@ public class Test001 {
         UserDao userDao = sqlSession.getMapper(UserDao.class);
         //int rel = userDao.insertUser(user);
         int rel = userDao.addUser(user);
+
+        System.out.println("rel:" + rel);
+        System.out.println("user:" + user);
+
+        sqlSession.commit();
+    }
+
+    @Test
+    public void update() {
+        User user = new User();
+        user.setId(2);
+        user.setAge(21);
+        user.setUserName("黄鹏嘉1");
+        user.setCreateAt(new Date());
+        try {
+            user.setMsg("你好".getBytes("GBK"));
+        } catch (UnsupportedEncodingException e) {
+        }
+
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        int rel = userDao.update(user);
 
         System.out.println("rel:" + rel);
         System.out.println("user:" + user);
