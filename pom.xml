@@ -23,13 +23,20 @@
             <version>5.1.40</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.oracle/ojdbc -->
-        <!--<dependency>-->
-            <!--<groupId>ojdbc</groupId>-->
-            <!--<artifactId>ojdbc</artifactId>-->
-            <!--<version>14</version>-->
-            <!--<scope>runtime</scope>-->
-        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.oracle.ojdbc/ojdbc8 -->
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>19.3.0.0</version>
+        </dependency>
+<!--        不引这个访问oracle会报错：不支持的字符集 (在类路径中添加 orai18n.jar): ZHS16GBK-->
+        <!-- https://mvnrepository.com/artifact/cn.easyproject/orai18n -->
+        <dependency>
+            <groupId>cn.easyproject</groupId>
+            <artifactId>orai18n</artifactId>
+            <version>12.1.0.2.0</version>
+        </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>
@@ -48,15 +55,24 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.2</version>
         </dependency>
-        <!-- 远程仓库没有，所以要将jar打入本地仓库中
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <!-- 远程仓库没有，可以将jar打入本地仓库中
         mvn install:install-file -Dfile=ojdbc-7.0.jar -DgroupId=oracle -DartifactId=ojdbc -Dversion=7.0 -Dpackaging=jar
          -->
-        <dependency>
-            <groupId>oracle</groupId>
-            <artifactId>ojdbc</artifactId>
-            <version>7.0</version>
-            <scope>runtime</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>oracle</groupId>-->
+<!--            <artifactId>ojdbc</artifactId>-->
+<!--            <version>7.0</version>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
+
     </dependencies>
 
 </project>

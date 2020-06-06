@@ -19,9 +19,10 @@
     select id, name USERNAME, createdate createAt, age, did dept_id,status from pwd_user where id = #{id}
     </select>
 
-    <select id="getByList" resultType="pwd.allen.entity.User">
-    select * from db_user where id = #{param[0]} and user_name=#{param1[1]}
-    </select>
+<!--    这条select注释掉，因为改成了在Dao接口上以注解的方式配置-->
+<!--    <select id="getByList" resultType="pwd.allen.entity.User">-->
+<!--    select * from db_user where id = #{param[0]} and user_name=#{param1[1]}-->
+<!--    </select>-->
 
     <select id="getByIdReturnMap" resultType="map">
     select * from db_user where id = #{id}
@@ -138,6 +139,22 @@
     <insert id="addUser" useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
         insert into db_user(user_name, age, status, dept_id)
         values(#{userName}, #{age}, #{status}, #{dept.id})
+    </insert>
+
+    <!-- 插入或者更新 -->
+    <insert id="insertOrUpdateUser">
+        insert into db_user(id, user_name, age, status, dept_id,create_at)
+        values(#{id}, #{userName}, #{age}, #{status}, #{dept.id}, #{createAt)
+        on DUPLICATE KEY UPDATE user_name=VALUES(user_name),age=VALUES(age),status=VALUES(status),dept_id=VALUES(dept_id);
+    </insert>
+
+    <!-- 批量插入或者更新 -->
+    <insert id="insertOrUpdateUserBatsh">
+        insert into db_user(id, user_name, age, status, dept_id,create_at) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.userName}, #{item.age}, #{item.status}, #{item.dept.id}, #{item.createAt,jdbcType=TIMESTAMP})
+        </foreach>
+        on DUPLICATE KEY UPDATE user_name=VALUES(user_name),age=VALUES(age),status=VALUES(status),dept_id=VALUES(dept_id);
     </insert>
 
     <!--

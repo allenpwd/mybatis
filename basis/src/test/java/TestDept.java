@@ -1,3 +1,4 @@
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author pwd
  * @create 2018-07-25 18:37
  **/
+@Slf4j
 public class TestDept {
 
     SqlSessionFactory sqlSessionFactory = null;

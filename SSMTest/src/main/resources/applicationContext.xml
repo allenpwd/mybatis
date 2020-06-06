@@ -34,9 +34,10 @@
         <property name="mapperLocations" value="classpath:mybatis/mapper/*xml"></property>
     </bean>
 
-    <mybatis:scan base-package="pwd.allen.mybatis.dao"/>
-
     <!--mapper接口扫描-->
+    <!--方式一-->
+    <!--<mybatis:scan base-package="pwd.allen.mybatis.dao"/>-->
+    <!--方式二-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="pwd.allen.mybatis.dao"/>
     </bean>

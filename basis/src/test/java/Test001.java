@@ -1,6 +1,7 @@
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
@@ -21,20 +22,21 @@ import pwd.allen.util.OraclePage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.*;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.Date;
 
 /**
  * @author pwd
  * @create 2018-07-22 14:31
  **/
+@Slf4j
 public class Test001 {
-
-    private static final Logger logger = LoggerFactory.getLogger(Test001.class);
 
     private SqlSessionFactory sqlSessionFactory = null;
     private SqlSession sqlSession = null;
@@ -66,10 +68,11 @@ public class Test001 {
 
         //新版本 根据接口生成一个代理对象，将mapper和接口绑定，接口类全名要和mapper namespace对应
         UserDao userDao = sqlSession.getMapper(UserDao.class);
-        //最终会去掉sqlSession.selectOne("pwd.allen.dao.UserDao.selectUser", params)
+        //最终会去调用 sqlSession.selectOne("pwd.allen.dao.UserDao.selectUser", params)
         //params类型为ParamMap，映射的值为 {id=1,param1=1}
         user = userDao.getById(1);
-        logger.info("user={}", user);
+        log.info("user={}", user);
+
     }
 
     @Test
@@ -106,8 +109,8 @@ public class Test001 {
 
         //association 直接关联出dept信息
         user = userDao.getUserAndDept(1);
-        logger.info("user={}", user);
-        logger.info("dept={}", user.getDept());
+        log.info("user={}", user);
+        log.info("dept={}", user.getDept());
 
         //association 分布关联出dept信息，可设置懒加载（lazyLoadingEnabled=true 和 aggressiveLazyLoading=false）
 //        user = userDao.getStep(1);
@@ -171,7 +174,7 @@ public class Test001 {
         UserDaoAnnotation userDaoAnnotation = sqlSession.getMapper(UserDaoAnnotation.class);
         User user = userDaoAnnotation.selectUser(1);
 
-        logger.info("user={}", user);
+        log.info("user={}", user);
     }
 
     /**
@@ -212,13 +215,13 @@ public class Test001 {
         UserDao userDao = sqlSession.getMapper(UserDao.class);
         Page<Object> page = PageHelper.startPage(1, 2);
         List<User> users = userDao.getUsers(null);
-        logger.info("users={}", users);
+        log.info("users={}", users);
 
         //分页数据可以从startPage返回的对象拿，也可以用PageInfo拿
-        logger.info("page={}", page);
+        log.info("page={}", page);
 
-        PageInfo<User> pageInfo = new PageInfo<User>(users);
-        logger.info("pageInfo={}", pageInfo);
+        PageInfo<User> pageInfo = new PageInfo<>(users);
+        log.info("pageInfo={}", pageInfo);
     }
 
     /**
@@ -239,7 +242,35 @@ public class Test001 {
             user.setUserName(UUID.randomUUID().toString().substring(0, 10));
             userDao.insertUser(user);
         }
-        logger.info("耗时{}", System.currentTimeMillis() - mills);
+        log.info("耗时{}", System.currentTimeMillis() - mills);
+    }
+
+    /**
+     * 插入或者更新
+     */
+    @Test
+    public void testInsertOrUpdate() throws SQLException {
+
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        long mills = System.currentTimeMillis();
+
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            User user = new User();
+            user.setId(20 + i);
+            user.setCreateAt(new Date());
+            user.setAge(26);
+            user.setUserName(UUID.randomUUID().toString().substring(0, 10));
+            list.add(user);
+        }
+        list.add(list.get(0));
+        list.add(list.get(0));
+        userDao.insertOrUpdateUserBatsh(list);
+
+//        sqlSession.commit();
+
+        log.info("耗时{}", System.currentTimeMillis() - mills);
+
     }
 
     /**
@@ -252,7 +283,7 @@ public class Test001 {
         page.setStart(1);
         page.setEnd(2);
         userDao.getPageByProcedure(page);
-        logger.info("total={}, data={}", page.getTotal(), page.getData());
+        log.info("total={}, data={}", page.getTotal(), page.getData());
     }
 
     @Test
