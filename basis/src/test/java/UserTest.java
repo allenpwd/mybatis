@@ -12,31 +12,28 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pwd.allen.dao.UserDao;
 import pwd.allen.dao.UserDaoAnnotation;
 import pwd.allen.entity.Department;
 import pwd.allen.entity.User;
-import pwd.allen.util.OraclePage;
+import pwd.allen.util.MyPage;
+import pwd.allen.util.StatusEnum;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.*;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.Date;
 
 /**
  * @author pwd
  * @create 2018-07-22 14:31
  **/
 @Slf4j
-public class Test001 {
+public class UserTest {
 
     private SqlSessionFactory sqlSessionFactory = null;
     private SqlSession sqlSession = null;
@@ -55,6 +52,7 @@ public class Test001 {
     public void destroy() {
         sqlSession.close();
     }
+
 
     /**
      * 根据userId查询User
@@ -83,7 +81,7 @@ public class Test001 {
 
         List<Object> list_param = new ArrayList<Object>();
 //        list_param.add(1);
-//        list_param.add("潘伟丹");
+//        list_param.add("门那粒沙");
 //        user = userDao.getByList(list_param);
 //        System.out.println(user);
 
@@ -125,23 +123,23 @@ public class Test001 {
     @Test
     public void insertXml() {
         User user = new User();
-        //user.setId(5);
+//        user.setId(5);
         user.setAge(21);
-        user.setUserName("黄鹏嘉");
-        user.setStatus(2);
+        user.setUserName("史珍香");
+        user.setStatus(StatusEnum.ENABLED);
         user.setCreateAt(new Date());
         Department dept = new Department();
         dept.setId(1);
         user.setDept(dept);
 
         UserDao userDao = sqlSession.getMapper(UserDao.class);
-        //int rel = userDao.insertUser(user);
+//        int rel = userDao.insertUser(user);
         int rel = userDao.addUser(user);
 
         System.out.println("rel:" + rel);
         System.out.println("user:" + user);
 
-        sqlSession.commit();
+//        sqlSession.commit();
     }
 
     @Test
@@ -226,6 +224,8 @@ public class Test001 {
 
     /**
      * 批量插入
+     *
+     * 设置为ExecutorType.BATCH后返回值不是成功插入的记录数，因为不是调用addUser就立即执行的
      */
     @Test
     public void testInsertBatch() {
@@ -235,12 +235,13 @@ public class Test001 {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         UserDao userDao = sqlSession.getMapper(UserDao.class);
         long mills = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100; i++) {
             User user = new User();
             user.setCreateAt(new Date());
-            user.setAge(i);
+            user.setAge(i + 100);
             user.setUserName(UUID.randomUUID().toString().substring(0, 10));
-            userDao.insertUser(user);
+            Integer rel = userDao.addUser(user);
+            System.out.println("rel=" + rel);
         }
         log.info("耗时{}", System.currentTimeMillis() - mills);
     }
@@ -274,15 +275,28 @@ public class Test001 {
     }
 
     /**
+     * 调用存储过程
+     */
+    @Test
+    public void testMysqlProcedure() {
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        MyPage page = new MyPage();
+        page.setPageNum(1);
+        page.setPageSize(1);
+        List<User> dataList = userDao.getPageByProcedure4Mysql(page);
+        log.info("total={}, data={}", page.getTotal(), dataList);
+    }
+
+    /**
      * 调用存储过程，利用oracle游标返回分页列表数据
      */
     @Test
     public void testOracleProcedure() {
         UserDao userDao = sqlSession.getMapper(UserDao.class);
-        OraclePage page = new OraclePage();
-        page.setStart(1);
-        page.setEnd(2);
-        userDao.getPageByProcedure(page);
+        MyPage page = new MyPage();
+        page.setPageNum(1);
+        page.setPageSize(1);
+        userDao.getPageByProcedure4Oracle(page);
         log.info("total={}, data={}", page.getTotal(), page.getData());
     }
 

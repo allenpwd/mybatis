@@ -2,6 +2,7 @@ package pwd.allen.entity;
 
 import lombok.Data;
 import org.apache.ibatis.type.Alias;
+import pwd.allen.util.StatusEnum;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,7 +17,7 @@ public class User implements Serializable {
     private Integer id;
     private String userName;
     private int age;
-    private int status;
+    private StatusEnum status;
     private Date createAt;
     private Department dept;
     private byte[] msg;

@@ -3,8 +3,8 @@ package pwd.allen.dao;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.hamcrest.core.Is;
 import pwd.allen.entity.User;
+import pwd.allen.util.MyPage;
 import pwd.allen.util.OraclePage;
 
 import java.util.List;
@@ -37,9 +37,7 @@ public interface UserDao {
 
     public User selectByMap(@Param("map") Map<String, Object> map);
 
-    public Integer insertUser(User user);
-
-    public Integer insertorUpdateUser(User user);
+    public Integer insertOrUpdateUser(User user);
 
     public Integer insertOrUpdateUserBatsh(List<User> list);
 
@@ -47,11 +45,16 @@ public interface UserDao {
 
     public Integer addUser(User user);
 
-    public Integer addUsers(List<User> users);
-
     public List<User> getUsers(Map<String, Object> mapParam);
 
-    public void getPageByProcedure(OraclePage page);
+    public void getPageByProcedure4Oracle(MyPage page);
+
+    /**
+     * 很鸡肋，总记录数回写到MyPage，但是查询列表不知道怎么回写，只能单独作为返回值
+     * @param page
+     * @return
+     */
+    public List<User> getPageByProcedure4Mysql(MyPage page);
 
     public int update(User user);
 }

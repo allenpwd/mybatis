@@ -19,7 +19,7 @@ import java.util.List;
  * @create 2018-07-25 18:37
  **/
 @Slf4j
-public class TestDept {
+public class DeptTest {
 
     SqlSessionFactory sqlSessionFactory = null;
     SqlSession sqlSession = null;

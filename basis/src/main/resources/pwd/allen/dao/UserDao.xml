@@ -4,6 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pwd.allen.dao.UserDao">
 
+
+    <resultMap id="UserMap" type="pwd.allen.entity.User">
+        <id column="id" property="id"/>
+        <result column="create_at" property="createAt"/>
+        <result column="user_name" property="userName"/>
+        <result column="age" property="age"/>
+        <result column="status" property="status"/>
+        <result column="msg" property="msg"/>
+    </resultMap>
+
     <!-- 设置UserDao的二级缓存
     eviction：缓存的回收策略， 默认的是 LRU。
     flushInterval ：刷新间隔，单位毫秒，默认情况是不设置，也就是没有刷新间隔，缓存仅仅调用语句时刷新。
@@ -62,29 +72,23 @@
     方式1 property写级联属性如dept.id
     方式2 用<association>
      -->
-    <resultMap id="MyMap" type="pwd.allen.entity.User">
-        <id column="id" property="id"/>
-        <result column="create_at" property="createAt"/>
-        <result column="user_name" property="userName"/>
-        <result column="desc" property="desc"/>
-        <!--<result column="did" property="dept.id"/>-->
+    <resultMap id="MyMap" type="pwd.allen.entity.User" extends="UserMap">
+        <result column="user_name" property="userName" typeHandler="pwd.allen.typeHandler.MyTypeHandler"/>
+        <!--<result column="dept_id" property="dept.id"/>-->
         <!--<result column="dept_name" property="dept.deptName"/>-->
         <association property="dept" javaType="pwd.allen.entity.Department">
-            <id column="did" property="id"/>
+            <id column="dept_id" property="id"/>
             <result column="dept_name" property="deptName"/>
         </association>
     </resultMap>
     <select id="getUserAndDept" resultMap="MyMap">
-    select du.*, dd.id did, dd.dept_name dept_name
+    select du.*, dd.dept_name dept_name
     from db_user du left join db_dept dd on dd.id=du.dept_id where du.id=#{id}
     </select>
 
     <!-- association 分布查询 -->
-    <resultMap id="MyMapStep" type="pwd.allen.entity.User">
-        <id column="id" property="id"/>
-        <result column="create_at" property="createAt"/>
-        <result column="user_name" property="userName"/>
-        <association property="dept" select="pwd.allen.dao.DepartmentDao.getById" column="did">
+    <resultMap id="MyMapStep" type="pwd.allen.entity.User" extends="UserMap">
+        <association property="dept" select="pwd.allen.dao.DepartmentDao.getById" column="dept_id">
         </association>
     </resultMap>
     <select id="getStep" resultMap="MyMapStep">
@@ -94,6 +98,7 @@
     <select id="getUsersByDeptId" resultType="pwd.allen.entity.User">
         select * from db_user where dept_id=#{deptId}
     </select>
+
     <select id="getUsers" resultType="pwd.allen.entity.User">
         select * from db_user where 1=1
          <if test="deptId != null and deptId!=''">
@@ -126,26 +131,40 @@
     select id,#{newName} user_name, age, status, create_at from db_user where id = #{map.id} and user_name=#{param1.userName}
     </select>
 
-    <!-- selectKey设置从序号获取自增ID -->
-    <insert id="insertUser">
-        <!--<selectKey keyColumn="id" keyProperty="id" order="BEFORE">
-            select user_seq.next()
-        </selectKey>-->
-    insert into db_user(id, user_name, age, status, dept_id)
-    values(#{id}, #{userName}, #{age}, #{status}, #{dept.id})
-    </insert>
-
-    <!-- useGeneratedKeys="true"用于mysql这种主键自增的情况 -->
+    <!-- useGeneratedKeys="true"用于mysql这种主键自增的情况
+        效果：如果id不为null则使用指定的值作为主键；否则数据库自增，并获取这个自增值然后赋给User -->
     <insert id="addUser" useGeneratedKeys="true" keyProperty="id" databaseId="mysql">
-        insert into db_user(user_name, age, status, dept_id)
-        values(#{userName}, #{age}, #{status}, #{dept.id})
+        insert into db_user(id, user_name, age, status, dept_id)
+        values(#{id}, #{userName}, #{age}, #{status}, #{dept.id})
+    </insert>
+    <!-- Oracle不支持自增；可以使用序列来模拟自增 -->
+    <insert id="addUser" databaseId="oracle">
+        <!-- 在插入之前查询主键值并赋给id -->
+        <selectKey keyProperty="id" order="BEFORE" resultType="int">
+            select USER_SEQ.nextval from dual
+        </selectKey>
+        insert into pwd_user(id, name, age, status, createdate, did)
+        values(#{id}, #{userName,jdbcType=NULL}, #{age}, #{status},#{createAt}, #{dept.id})
     </insert>
 
     <!-- 插入或者更新 -->
-    <insert id="insertOrUpdateUser">
+    <insert id="insertOrUpdateUser" databaseId="mysql">
         insert into db_user(id, user_name, age, status, dept_id,create_at)
-        values(#{id}, #{userName}, #{age}, #{status}, #{dept.id}, #{createAt)
+        values(#{id}, #{userName}, #{age}, #{status}, #{dept.id}, #{createAt})
         on DUPLICATE KEY UPDATE user_name=VALUES(user_name),age=VALUES(age),status=VALUES(status),dept_id=VALUES(dept_id);
+    </insert>
+    <!-- 插入或者更新 -->
+    <insert id="insertOrUpdateUser" databaseId="oracle">
+        MERGE INTO db_user T1
+            USING (SELECT #{id} id, #{userName} user_name, #{age} age, #{status} status, #{dept.id} dept_id, #{createAt} create_at FROM dual) T2
+            ON ( T1.a=T2.a)
+        WHEN MATCHED THEN
+            UPDATE SET T1.user_name = T2.use_name
+                , T1.age = T2.age
+                , T1.status = T2.status
+                , T1.dept_id = T2.dept_id
+        WHEN NOT MATCHED THEN
+            INSERT (id, user_name, age, status, dept_id,create_at) values(T1.id, T1.user_uame, T1.age, T1.status, T1.dept_id, T1.create_at)
     </insert>
 
     <!-- 批量插入或者更新 -->
@@ -157,37 +176,27 @@
         on DUPLICATE KEY UPDATE user_name=VALUES(user_name),age=VALUES(age),status=VALUES(status),dept_id=VALUES(dept_id);
     </insert>
 
-    <!--
-        Oracle不支持自增；可以使用序列来模拟自增
-    -->
-    <insert id="addUser" databaseId="oracle">
-        <!-- 在插入之前查询主键值并赋给id -->
-        <selectKey keyProperty="id" order="BEFORE" resultType="int">
-            select USER_SEQ.nextval from dual
-        </selectKey>
-        insert into pwd_user(id, name, age, status, createdate, did)
-        values(#{id}, #{userName,jdbcType=NULL}, #{age}, #{status},#{createAt}, #{dept.id})
-    </insert>
-
     <!-- public void getPageByProcedure();
 	1、使用select标签定义调用存储过程
 	2、statementType="CALLABLE":表示要调用存储过程
 	3、{call procedure_name(params)}
 	-->
-    <select id="getPageByProcedure" statementType="CALLABLE" databaseId="oracle" useCache="false">
+    <select id="getPageByProcedure4Oracle" statementType="CALLABLE" databaseId="oracle" useCache="false">
 		{call my_procedure(
-			#{start,mode=IN,jdbcType=INTEGER},
-			#{end,mode=IN,jdbcType=INTEGER},
+			#{pageNum,mode=IN,jdbcType=INTEGER},
+			#{pageSize,mode=IN,jdbcType=INTEGER},
 			#{total,mode=OUT,jdbcType=INTEGER},
-			#{data,mode=OUT,jdbcType=CURSOR,javaType=ResultSet,resultMap=PageData}
+			#{data,mode=OUT,jdbcType=CURSOR,javaType=ResultSet,resultMap=UserMap}
 		)}
 	</select>
-    <resultMap type="pwd.allen.entity.User" id="PageData">
-        <id column="ID" property="id"/>
-        <result column="NAME" property="userName"/>
-        <result column="CREATEDATE" property="createAt"/>
-        <result column="age" property="age"/>
-        <result column="status" property="status"/>
-    </resultMap>
+    <select id="getPageByProcedure4Mysql" statementType="CALLABLE" databaseId="mysql" useCache="false" resultMap="UserMap">
+        <![CDATA[
+		call my_procedure(
+			#{pageNum,mode=IN,jdbcType=INTEGER},
+			#{pageSize,mode=IN,jdbcType=INTEGER},
+			#{total,mode=OUT,jdbcType=INTEGER}
+		)
+		]]>
+	</select>
 
 </mapper>

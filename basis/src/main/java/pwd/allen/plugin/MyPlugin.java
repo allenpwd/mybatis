@@ -44,6 +44,7 @@ public class MyPlugin implements Interceptor {
      * @return
      * @throws Throwable
      */
+    @Override
     public Object intercept(Invocation invocation) throws Throwable {
 
         System.out.println("方法执行前拦截：" + invocation.getMethod());
@@ -67,6 +68,7 @@ public class MyPlugin implements Interceptor {
         return proceed;
     }
 
+    @Override
     public Object plugin(Object target) {
         //借助Plugin的wrap方法来使用当前Interceptor包装目标对象，该方法会根据注解决定拦截类和方法
         return Plugin.wrap(target, this);
@@ -76,6 +78,7 @@ public class MyPlugin implements Interceptor {
      * 将插件注册时的property属性设置传进来
      * @param properties
      */
+    @Override
     public void setProperties(Properties properties) {
         System.out.println("插件配置的属性：" + properties);
     }
