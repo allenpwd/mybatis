@@ -142,25 +142,31 @@ public class UserTest {
 //        sqlSession.commit();
     }
 
+    /**
+     * 使用[set autocommit=0;SELECT * FROM DB_USER where id=1 for update;]锁住指定行
+     * 然后执行，发现timeout有效果，5秒后抛异常com.mysql.jdbc.exceptions.MySQLTimeoutException: Statement cancelled due to timeout or client request
+     * 使用show processlist查看连接，能看到这条连接state=updating，卡了5s后断开了
+     *
+     * @throws UnsupportedEncodingException
+     * @throws InterruptedException
+     */
     @Test
-    public void update() {
-        User user = new User();
-        user.setId(2);
-        user.setAge(21);
-        user.setUserName("黄鹏嘉1");
-        user.setCreateAt(new Date());
-        try {
-            user.setMsg("你好".getBytes("GBK"));
-        } catch (UnsupportedEncodingException e) {
-        }
-
+    public void update() throws UnsupportedEncodingException, InterruptedException {
         UserDao userDao = sqlSession.getMapper(UserDao.class);
+
+        User user = new User();
+        user.setId(1);
+        user.setAge(21);
+        user.setUserName("门那粒沙");
+        user.setCreateAt(new Date());
+        user.setMsg("你好".getBytes("GBK"));
+
         int rel = userDao.update(user);
 
         System.out.println("rel:" + rel);
         System.out.println("user:" + user);
 
-        sqlSession.commit();
+//        sqlSession.commit();
     }
 
     @Test

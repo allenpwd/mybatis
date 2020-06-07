@@ -30,6 +30,9 @@
         <setting name="callSettersOnNulls" value="true"/>
         <!-- 开启二级缓存 -->
         <setting name="cacheEnabled" value="true"/>
+        <!--设置超时时间，它决定数据库驱动等待数据库响应的秒数
+            设置为5时，测试更新被锁的行，5s后抛异常：com.mysql.jdbc.exceptions.MySQLTimeoutException: Statement cancelled due to timeout or client request-->
+        <setting name="defaultStatementTimeout" value="25"/>
     </settings>
 
     <typeAliases>
@@ -68,7 +71,7 @@
             <property name="name" value="allen"/>
         </plugin>
     </plugins>
-    <environments default="oracle">
+    <environments default="mysql">
 
         <environment id="oracle">
             <transactionManager type="JDBC"></transactionManager>

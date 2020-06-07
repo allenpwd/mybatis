@@ -46,7 +46,7 @@
     select * from db_user where age &lt;= #{age}
     </select>
 
-    <update id="update" parameterType="pwd.allen.entity.User">
+    <update id="update" parameterType="pwd.allen.entity.User" timeout="5">
         update db_user
         <set>
             <if test="userName != null and userName != ''">
@@ -61,9 +61,9 @@
             <if test="dept != null and dept.id != null">
                 dept_id=#{dept.id},
             </if>
-            <if test="msg != null">
-                msg=#{msg},
-            </if>
+<!--            <if test="msg != null">-->
+<!--                msg=#{msg,jdbcType=BLOB},-->
+<!--            </if>-->
         </set>
         where id=#{id}
     </update>
