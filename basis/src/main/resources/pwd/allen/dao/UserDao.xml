@@ -17,16 +17,13 @@
     <!-- 设置UserDao的二级缓存
     eviction：缓存的回收策略， 默认的是 LRU。
     flushInterval ：刷新间隔，单位毫秒，默认情况是不设置，也就是没有刷新间隔，缓存仅仅调用语句时刷新。
-     size ：引用数目，正整数，代表缓存最多可以存储多少个对象，太大容易导致内存溢出
+     size ：引用数目，正整数，代表缓存最多可以存储多少个对象，太大容易导致内存溢出，默认1024
      readOnly ：只读，true/false，设为false时会返回缓存对象的拷贝（通过序列化）。这会慢一些，但是安全，因此默认是 false。
      -->
     <cache/>
 
     <select id="getById" resultType="pwd.allen.entity.User">
-    select id, user_name, status, create_at, age, dept_id, msg from db_user where id = #{id}
-    </select>
-    <select id="getById" resultType="pwd.allen.entity.User" databaseId="oracle">
-    select id, name USERNAME, createdate createAt, age, did dept_id,status from pwd_user where id = #{id}
+      select id, user_name, status, create_at, age, dept_id, msg from db_user where id = #{id}
     </select>
 
 <!--    这条select注释掉，因为改成了在Dao接口上以注解的方式配置-->
@@ -35,7 +32,7 @@
 <!--    </select>-->
 
     <select id="getByIdReturnMap" resultType="map">
-    select * from db_user where id = #{id}
+      select * from db_user where id = #{id}
     </select>
 
     <select id="getsByUserNameLike" resultType="pwd.allen.entity.User">
@@ -82,7 +79,7 @@
         </association>
     </resultMap>
     <select id="getUserAndDept" resultMap="MyMap">
-    select du.*, dd.dept_name dept_name
+    select du.*, dd.dept_name
     from db_user du left join db_dept dd on dd.id=du.dept_id where du.id=#{id}
     </select>
 

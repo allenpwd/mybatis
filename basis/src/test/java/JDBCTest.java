@@ -22,7 +22,7 @@ public class JDBCTest {
         Properties properties = new Properties();
         properties.load(this.getClass().getClassLoader().getResourceAsStream("dbconfig.properties"));
 
-        //可以省略，DriverManager会加载并初始化jar里的Driver（SPI机制）
+        //可以省略，JDBC 4.0以后 DriverManager会加载并初始化jar里的Driver（SPI机制）
 //        Class.forName(properties.getProperty("jdbc.driver"));
 
         String sql = "select * from db_user where id=?";
