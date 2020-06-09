@@ -217,8 +217,8 @@ public class UserTest {
     public void testPageHelper() {
 
         UserDao userDao = sqlSession.getMapper(UserDao.class);
-        Page<Object> page = PageHelper.startPage(1, 2);
-        List<User> users = userDao.getUsers(null);
+        Page<Object> page = PageHelper.startPage(2, 1);
+        List<User> users = userDao.getUsers(Collections.singletonMap("deptId", 1));
         log.info("users={}", users);
 
         //分页数据可以从startPage返回的对象拿，也可以用PageInfo拿

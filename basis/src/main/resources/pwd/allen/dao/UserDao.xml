@@ -97,12 +97,13 @@
     </select>
 
     <select id="getUsers" resultType="pwd.allen.entity.User">
+        <bind name="parameters" value="_parameter" />
         select * from db_user where 1=1
-         <if test="deptId != null and deptId!=''">
-             and dept_id = #{deptId}
-         </if>
-         <if test="col != null and col != ''">
-             and #{col} = #{col}
+        <if test="col != null and col != ''">
+            and #{col} = #{col}
+        </if>
+        <if test="parameters.deptId != null and parameters.deptId!=''">
+             and dept_id = #{parameters.deptId}
          </if>
     </select>
 
