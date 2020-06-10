@@ -3,13 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pwd.allen.dao.DepartmentDao">
+
+    <resultMap id="deptMap" type="pwd.allen.entity.Department">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+    </resultMap>
+
     <select id="getById" resultType="pwd.allen.entity.Department">
     select * from db_dept where id = #{id}
     </select>
 
-    <resultMap id="deptMap" type="pwd.allen.entity.Department">
+    <resultMap id="CollectMap" type="pwd.allen.entity.Department" extends="deptMap">
         <id column="did" property="id"/>
-        <result column="dept_name" property="deptName"/>
         <collection property="users" ofType="pwd.allen.entity.User">
             <id property="id" column="id"/>
             <result column="user_name" property="userName"/>
@@ -19,31 +24,28 @@
         </collection>
     </resultMap>
     <select id="getDeptAndUsers" resultMap="deptMap">
-    SELECT d.id did, d.`dept_name` dept_name, u.* FROM db_dept d LEFT JOIN db_user u ON d.id=u.`dept_id` WHERE 1=1
+    SELECT d.id did, d.dept_name, u.* FROM db_dept d LEFT JOIN db_user u ON d.id=u.`dept_id` WHERE 1=1
     <if test="_parameter != null and _parameter != ''">
         and d.id=#{id}
     </if>
     </select>
 
-    <resultMap id="deptMapStep" type="pwd.allen.entity.Department">
-        <id column="id" property="id"/>
-        <result column="dept_name" property="deptName"/>
+    <resultMap id="deptMapStep" type="pwd.allen.entity.Department" extends="deptMap">
         <!-- 如果关联的字段有多个，则用map格式关联，如column="{key1=val1,key2=val2}"，key1和key2就可以在getUsers的sql里引用 -->
         <collection property="users" select="pwd.allen.dao.UserDao.getUsers" column="{deptId=id,col=dept_name}" fetchType="lazy">
-            <id property="id" column="id"/>
-            <result column="user_name" property="userName"/>
-            <result column="status" property="status"/>
-            <result column="age" property="age"/>
-            <result column="create_at" property="createAt"/>
+            <!--<id property="id" column="id"/>-->
+            <!--<result column="user_name" property="userName"/>-->
+            <!--<result column="status" property="status"/>-->
+            <!--<result column="age" property="age"/>-->
+            <!--<result column="create_at" property="createAt"/>-->
         </collection>
     </resultMap>
     <select id="getDeptAndUsersStep" resultMap="deptMapStep">
     SELECT * FROM db_dept WHERE id=#{id}
     </select>
 
-    <resultMap id="deptMapStep2" type="pwd.allen.entity.Department">
-        <id column="id" property="id"/>
-        <result column="dept_name" property="deptName"/>
+    <resultMap id="deptMapStep2" type="pwd.allen.entity.Department" extends="deptMap">
+        <id column="id" property="id"/>  <!--TODO 这里id如果注释掉则id为null，不知道原因-->
         <!-- 鉴别器 可以动态修改封装规则
         column指定判定的列名
         javaType 列名对应的java类型
@@ -55,11 +57,11 @@
             <case value="1" resultType="pwd.allen.entity.Department">
                 <!-- 如果关联的字段有多个，则用map格式关联，如column="{key1=val1,key2=val2}" -->
                 <collection property="users" select="pwd.allen.dao.UserDao.getUsersByDeptId" column="id">
-                    <id property="id" column="id"/>
-                    <result column="user_name" property="userName"/>
-                    <result column="status" property="status"/>
-                    <result column="age" property="age"/>
-                    <result column="create_at" property="createAt"/>
+                    <!--<id property="id" column="id"/>-->
+                    <!--<result column="user_name" property="userName"/>-->
+                    <!--<result column="status" property="status"/>-->
+                    <!--<result column="age" property="age"/>-->
+                    <!--<result column="create_at" property="createAt"/>-->
                 </collection>
             </case>
             <!-- 如果id=2，则把id赋值给deptName

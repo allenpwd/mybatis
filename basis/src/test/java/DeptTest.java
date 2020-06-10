@@ -23,6 +23,7 @@ public class DeptTest {
 
     SqlSessionFactory sqlSessionFactory = null;
     SqlSession sqlSession = null;
+    DepartmentDao departmentDao = null;
 
     @Before
     public void init() throws IOException {
@@ -30,6 +31,7 @@ public class DeptTest {
         InputStream inputStream = Resources.getResourceAsStream(resource);
         sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         sqlSession = sqlSessionFactory.openSession();
+        departmentDao = sqlSession.getMapper(DepartmentDao.class);
     }
 
     @After
@@ -37,25 +39,33 @@ public class DeptTest {
         sqlSession.close();
     }
 
+    /**
+     * 关联查询
+     *
+     * 遇到的问题：collection设置了fetchType=lazy但还是没有懒加载
+     *  原因：可能是debug导致lazyLoadTriggerMethods指定的方法被触发；不用debug的话就正常了
+     */
     @Test
-    public void test01() {
-        DepartmentDao departmentDao = sqlSession.getMapper(DepartmentDao.class);
-
-        Department department = null;
-        List<Department> list = null;
-
-//        list = departmentDao.getDeptAndUsers(null);
+    public void collectionTest() throws InterruptedException {
+        //一次性关联查询出来
+//        List<Department> list = departmentDao.getDeptAndUsers(null);
 //        System.out.println(list);
 
         //collection标签关联查询users
-        //todo collection设置了fetchType=lazy但还是没有懒加载
-//        department = departmentDao.getDeptAndUsersStep(2);
-//        System.out.println(department.getId());
-//        System.out.println(department.getUsers());
+        Department department = departmentDao.getDeptAndUsersStep(1);
+        System.out.println("department.id：" + department.getId());
+        System.out.println("懒加载还没有被触发");
 
-        //测试鉴别器 id=1时关联出users；id=2时将id赋值给deptName
-        department = departmentDao.getDeptAndUsersStep2(1);
         System.out.println(department.getUsers());
+    }
+
+    /**
+     * 测试鉴别器 id=1时关联出users；id=2时将id赋值给deptName
+     */
+    @Test
+    public void test02() {
+        Department department = departmentDao.getDeptAndUsersStep2(1);
+        System.out.println(department);
         department = departmentDao.getDeptAndUsersStep2(2);
         System.out.println(department);
         department = departmentDao.getDeptAndUsersStep2(2);

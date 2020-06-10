@@ -104,7 +104,7 @@
         </if>
         <if test="parameters.deptId != null and parameters.deptId!=''">
              and dept_id = #{parameters.deptId}
-         </if>
+        </if>
     </select>
 
     <sql id="mySql">

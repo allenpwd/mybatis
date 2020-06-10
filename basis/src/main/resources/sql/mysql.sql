@@ -50,5 +50,6 @@ END
 
 
 INSERT INTO `db_dept`(`id`, `dept_name`) VALUES (1, '开发部');
+INSERT INTO `db_dept`(`id`, `dept_name`) VALUES (2, '市场部');
 INSERT INTO `db_user`(`id`, `user_name`, `age`, `status`, `create_at`, `dept_id`, `msg`) VALUES (1, '门那粒沙', 20, 1, '2020-06-06 20:11:26', 1, 0xC5A3B1C6);
 
