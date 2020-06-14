@@ -196,18 +196,6 @@ public class UserTest {
     }
 
     /**
-     * 使用SystemMetaObject工具操作对象属性
-     */
-    @Test
-    public void testMetaObject() {
-        User user = new User();
-        MetaObject metaObject = SystemMetaObject.forObject(user);
-        metaObject.setValue("userName", "abc");
-        metaObject.setValue("dept.deptName", "部门名称");
-        System.out.println(metaObject.getValue("dept.deptName"));
-    }
-
-    /**
      * 使用PageHelper实现分页
      * 使用方式：
      * 1.引入pageHelper
