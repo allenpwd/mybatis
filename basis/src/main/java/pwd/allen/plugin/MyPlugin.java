@@ -30,9 +30,9 @@ import java.util.Properties;
  * 2.调用interceptor.plugin(target);返回target包装后的对象
  *
  * 插件编写：
- * 1.编写Interceptor的实现类
- * 2.使用@Intercepts注解完成插件签名
- * 3.将写好的插件注册到全局配置文件中
+ *  1.编写Interceptor的实现类
+ *  2.使用@Intercepts注解完成插件签名
+ *  3.将写好的插件注册到全局配置文件中
  *
  * @author 门那粒沙
  * @create 2019-07-06 21:28
@@ -40,7 +40,8 @@ import java.util.Properties;
 public class MyPlugin implements Interceptor {
 
     /**
-     * 拦截目标对象的目标方法的执行；
+     * 回调时机：目标对象的目标方法被执行时
+     *
      * @param invocation
      * @return
      * @throws Throwable
@@ -69,13 +70,23 @@ public class MyPlugin implements Interceptor {
         return proceed;
     }
 
+    /**
+     * 回调时机：目标对象被Configuration创建时
+     *
+     * 用于给插件机会包装目标对象为代理对象
+     *
+     * @param target
+     * @return
+     */
     @Override
     public Object plugin(Object target) {
-        //借助Plugin的wrap方法来使用当前Interceptor包装目标对象，该方法会根据注解决定拦截类和方法
+        //借助Plugin的wrap方法来使用当前Interceptor包装目标对象，该方法会根据注解决定拦截类和方法，如果不是目标方法则直接执行目标方法
         return Plugin.wrap(target, this);
     }
 
     /**
+     * 调用时机：插件创建并注册时
+     *
      * 将插件注册时的property属性设置传进来
      * @param properties
      */

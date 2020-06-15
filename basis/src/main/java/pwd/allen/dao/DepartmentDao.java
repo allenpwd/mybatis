@@ -12,7 +12,7 @@ import java.util.List;
 public interface DepartmentDao {
     public Department getById(Integer id);
 
-    public List<Department> getDeptAndUsers(Integer id);
+    public List<Department> getDeptAndUsers(Department dept);
 
     public Department getDeptAndUsersStep(Integer id);
     public Department getDeptAndUsersStep2(Integer id);

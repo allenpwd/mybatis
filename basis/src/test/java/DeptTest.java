@@ -39,6 +39,13 @@ public class DeptTest {
         sqlSession.close();
     }
 
+    @Test
+    public void rowBound() {
+        List<Department> deptAndUsers = departmentDao.getDeptAndUsers(null);
+        System.out.println(deptAndUsers);
+    }
+
+
     /**
      * 关联查询
      *

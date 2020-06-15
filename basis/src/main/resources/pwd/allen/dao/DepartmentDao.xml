@@ -13,6 +13,9 @@
     select * from db_dept where id = #{id}
     </select>
 
+    <!--部门id相同的User会被设置到相同的Collection
+        判断是否同一行的逻辑见：org.apache.ibatis.executor.resultset.DefaultResultSetHandler.getResultMappingsForRowKey
+    -->
     <resultMap id="CollectMap" type="pwd.allen.entity.Department" extends="deptMap">
         <id column="did" property="id"/>
         <collection property="users" ofType="pwd.allen.entity.User">
@@ -23,10 +26,13 @@
             <result column="create_at" property="createAt"/>
         </collection>
     </resultMap>
-    <select id="getDeptAndUsers" resultMap="deptMap">
+    <select id="getDeptAndUsers" resultMap="CollectMap">
     SELECT d.id did, d.dept_name, u.* FROM db_dept d LEFT JOIN db_user u ON d.id=u.`dept_id` WHERE 1=1
-    <if test="_parameter != null and _parameter != ''">
+    <if test="id != null and id != ''">
         and d.id=#{id}
+    </if>
+    <if test="deptName != null and deptName != ''">
+        and d.dept_name=#{deptName}
     </if>
     </select>
 
