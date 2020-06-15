@@ -1,5 +1,8 @@
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.page.PageParams;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -39,9 +42,23 @@ public class DeptTest {
         sqlSession.close();
     }
 
+    /**
+     * 使用rowBound实现分页
+     *
+     * mybatis是查出全部数据，然后再进行截取
+     * 如果有引入PageInterceptor插件，则会在sql层面做分页，他有三种分页的实现方式：
+     *  1、PageHelper.startPage；这里用了ThreadLocal
+     *  2、使用rowBound做传参；默认不会执行count，可通过rowBoundsWithCount属性配置
+     *  3、传参实现IPage接口
+     */
     @Test
     public void rowBound() {
-        List<Department> deptAndUsers = departmentDao.getDeptAndUsers(null);
+        Department param = new Department();
+        param.setId(1);
+
+        RowBounds rowBounds = new RowBounds(0, 1);
+        // rowBounds不能传空，否则空指针；不想分页可以传RowBounds.DEFAULT
+        List<Department> deptAndUsers = departmentDao.getDeptAndUsers(param, rowBounds);
         System.out.println(deptAndUsers);
     }
 

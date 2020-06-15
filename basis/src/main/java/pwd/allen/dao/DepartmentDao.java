@@ -1,6 +1,7 @@
 package pwd.allen.dao;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 import pwd.allen.entity.Department;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public interface DepartmentDao {
     public Department getById(Integer id);
 
-    public List<Department> getDeptAndUsers(Department dept);
+    public List<Department> getDeptAndUsers(Department dept, RowBounds rowBounds);
 
     public Department getDeptAndUsersStep(Integer id);
     public Department getDeptAndUsersStep2(Integer id);

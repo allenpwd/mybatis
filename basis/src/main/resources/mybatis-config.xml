@@ -64,6 +64,8 @@
     <plugins>
         <!--分页-->
         <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--RowBounds方式是否做count查询，默认false-->
+            <property name="rowBoundsWithCount" value="true"/>
         </plugin>
 
         <!--自定义插件-->
