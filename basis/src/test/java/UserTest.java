@@ -200,6 +200,8 @@ public class UserTest {
      * 使用方式：
      * 1.引入pageHelper
      * 2.配置PageInterceptor拦截器至全局配置文件
+     *
+     * 这个分页插件支持自定义count sql语句，需要写一个id为 要查询的sqlId_COUNT
      */
     @Test
     public void testPageHelper() {

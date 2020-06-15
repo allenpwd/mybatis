@@ -1,10 +1,8 @@
-import org.apache.ibatis.type.BigIntegerTypeHandler;
 import org.junit.Test;
 import pwd.allen.typeHandler.MyTypeHandler;
 import pwd.allen.util.StatusEnum;
 
 import java.lang.reflect.Type;
-import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
