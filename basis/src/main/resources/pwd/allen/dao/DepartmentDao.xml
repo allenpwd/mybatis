@@ -19,11 +19,6 @@
     <resultMap id="CollectMap" type="pwd.allen.entity.Department" extends="deptMap">
         <id column="did" property="id"/>
         <collection property="users" ofType="pwd.allen.entity.User">
-            <id property="id" column="id"/>
-            <result column="user_name" property="userName"/>
-            <result column="status" property="status"/>
-            <result column="age" property="age"/>
-            <result column="create_at" property="createAt"/>
         </collection>
     </resultMap>
     <select id="getDeptAndUsers" resultMap="CollectMap">
@@ -34,6 +29,20 @@
     <if test="deptName != null and deptName != ''">
         and d.dept_name=#{deptName}
     </if>
+    </select>
+
+    <resultMap id="CollectMap2" type="pwd.allen.entity.Department" extends="deptMap">
+        <collection property="users" ofType="pwd.allen.entity.User" select="pwd.allen.dao.UserDao.getUsers" column="deptId=id">
+        </collection>
+    </resultMap>
+    <select id="getDeptAndUsers2" resultMap="CollectMap2">
+        SELECT * FROM db_dept WHERE 1=1
+        <if test="param.id != null and param.id != ''">
+            and id=#{param.id}
+        </if>
+        <if test="param.deptName != null and param.deptName != ''">
+            and dept_name=#{param.deptName}
+        </if>
     </select>
 
     <resultMap id="deptMapStep" type="pwd.allen.entity.Department" extends="deptMap">

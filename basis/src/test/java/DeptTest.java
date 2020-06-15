@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pwd.allen.dao.DepartmentDao;
 import pwd.allen.entity.Department;
+import pwd.allen.util.ParamPage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,6 +51,8 @@ public class DeptTest {
      *  1、PageHelper.startPage；这里用了ThreadLocal
      *  2、使用rowBound做传参；默认不会执行count，可通过rowBoundsWithCount属性配置
      *  3、传参实现IPage接口
+     *
+     * 问题：分页的话，如果resultMap有内嵌的Collection，最好不要用join关联的方式，而是用select去单独查询
      */
     @Test
     public void rowBound() {
@@ -59,6 +62,24 @@ public class DeptTest {
         RowBounds rowBounds = new RowBounds(0, 1);
         // rowBounds不能传空，否则空指针；不想分页可以传RowBounds.DEFAULT
         List<Department> deptAndUsers = departmentDao.getDeptAndUsers(param, rowBounds);
+        System.out.println(deptAndUsers);
+    }
+
+    /**
+     * 分页方式：传参实现IPage接口
+     */
+    @Test
+    public void useIPage() {
+        Department dept = new Department();
+        dept.setId(1);
+
+        ParamPage<Department> paramPage = new ParamPage<>();
+        paramPage.setParam(dept);
+        paramPage.setPageNum(0);
+        paramPage.setPageSize(1);
+
+        // rowBounds不能传空，否则空指针；不想分页可以传RowBounds.DEFAULT
+        List<Department> deptAndUsers = departmentDao.getDeptAndUsers2(paramPage);
         System.out.println(deptAndUsers);
     }
 
