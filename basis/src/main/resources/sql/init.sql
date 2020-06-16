@@ -1,0 +1,1 @@
+INSERT INTO `db_dept`(`id`, `dept_name`) VALUES (1, '开发部');

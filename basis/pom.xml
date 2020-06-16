@@ -6,11 +6,11 @@
     <parent>
         <groupId>pwd.allen</groupId>
         <artifactId>mybatis</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>mybatis-SNAPSHOT</version>
     </parent>
     <groupId>pwd.allen.mybatis</groupId>
     <artifactId>basis</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>mybatis-SNAPSHOT</version>
 
 
     <dependencies>
