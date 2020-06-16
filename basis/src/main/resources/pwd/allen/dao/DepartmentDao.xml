@@ -72,6 +72,10 @@
             <case value="1" resultType="pwd.allen.entity.Department">
                 <!-- 如果关联的字段有多个，则用map格式关联，如column="{key1=val1,key2=val2}" -->
                 <collection property="users" select="pwd.allen.dao.UserDao.getUsersByDeptId" column="id">
+                    <!--
+                        不指定也能自动装配
+                        逻辑：org.apache.ibatis.executor.resultset.DefaultResultSetHandler#applyAutomaticMappings
+                    -->
                     <!--<id property="id" column="id"/>-->
                     <!--<result column="user_name" property="userName"/>-->
                     <!--<result column="status" property="status"/>-->
@@ -105,5 +109,15 @@
             select #{dept.deptName} dept_name from dual
         </foreach>
     </insert>
+
+    <select id="getDepts" resultType="Department">
+        select * from db_dept
+        <where>
+            id in
+            <foreach collection="array" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </select>
 
 </mapper>

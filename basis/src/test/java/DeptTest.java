@@ -1,4 +1,5 @@
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageParams;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import pwd.allen.dao.DepartmentDao;
 import pwd.allen.entity.Department;
+import pwd.allen.entity.User;
 import pwd.allen.util.ParamPage;
 
 import java.io.IOException;
@@ -81,6 +83,9 @@ public class DeptTest {
         // rowBounds不能传空，否则空指针；不想分页可以传RowBounds.DEFAULT
         List<Department> deptAndUsers = departmentDao.getDeptAndUsers2(paramPage);
         System.out.println(deptAndUsers);
+
+        // 使用PageInfo获取分页信息
+        PageInfo<Department> pageInfo = new PageInfo<>(deptAndUsers);
     }
 
 
@@ -135,5 +140,19 @@ public class DeptTest {
         int rel = departmentDao.addDepts(list);
         System.out.println("rel:" + rel);
         sqlSession.commit();
+    }
+
+
+    /**
+     * 查询时会对传参进行包装，List->list Collection->collection Array->array
+     *   代码位置：org.apache.ibatis.session.defaults.DefaultSqlSession#wrapCollection(java.lang.Object)
+     *
+     * {@link org.apache.ibatis.scripting.xmltags.ForEachSqlNode}在取值时会把Array类型转成List去处理
+     * 代码地址：org.apache.ibatis.scripting.xmltags.ExpressionEvaluator#evaluateIterable(java.lang.String, java.lang.Object)
+     */
+    @Test
+    public void paramTest() {
+        List<Department> depts = departmentDao.getDepts("1,2".split(","));
+        System.out.println(depts);
     }
 }

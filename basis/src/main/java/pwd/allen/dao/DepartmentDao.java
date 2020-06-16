@@ -14,13 +14,27 @@ import java.util.List;
 public interface DepartmentDao {
     public Department getById(Integer id);
 
+    /**
+     * 分页
+     * @param dept
+     * @param rowBounds
+     * @return
+     */
     public List<Department> getDeptAndUsers(Department dept, RowBounds rowBounds);
 
+    /**
+     * 分页
+     * @param paramPage
+     * @return
+     */
     public List<Department> getDeptAndUsers2(ParamPage<Department> paramPage);
 
     public Department getDeptAndUsersStep(Integer id);
+
     public Department getDeptAndUsersStep2(Integer id);
 
     public Integer addDepts(@Param("depts") List<Department> depts);
+
+    public List<Department> getDepts(String[] ids);
 
 }
