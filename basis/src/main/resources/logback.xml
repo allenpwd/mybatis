@@ -28,6 +28,9 @@
         </encoder>
     </appender>
 
+    <!--mybatis 的 log 会已sql的id作为log的name
+        源码见：org.apache.ibatis.mapping.MappedStatement.Builder.Builder
+    -->
     <logger name="pwd.allen.dao" level="debug" additivity="false">
         <appender-ref ref="console"/>
 <!--        <appender-ref ref="file"/>-->

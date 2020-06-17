@@ -6,4 +6,15 @@ spring:
 #    data: classpath:sql/mysql.sql
     url: jdbc:mysql://localhost:3307/test?useUnicode=true&characterEncoding=utf8&useAffectedRows=true&noAccessToProcedureBodies=true
     username: root
-    password: 123
+    password: 123456
+
+
+#配置枚举 支持通配符 * 或者 ; 分割
+mybatis-plus:
+  type-enums-package: pwd.allen.enums
+  configuration:
+    configuration
+
+logging:
+  level:
+    pwd.allen.mapper: debug
