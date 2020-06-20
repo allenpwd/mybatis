@@ -35,7 +35,7 @@
         <!-- 指定实体类的生成策略 -->
         <!-- targetPackage：生成的实体类所在的包 -->
         <!-- targetProject：生成的实体类所在的硬盘位置 -->
-        <javaModelGenerator targetPackage="pwd.allen.entity" targetProject="./src/main/java">
+        <javaModelGenerator targetPackage="pwd.allen.entity" targetProject="${user.home}/Desktop/generate-by-mb">
             <!-- 是否允许子包 -->
             <property name="enableSubPackages" value="true" />
             <!-- 是否对modal添加构造函数 -->
@@ -47,7 +47,7 @@
         </javaModelGenerator>
 
         <!-- 指定mapper的生成策略 -->
-        <sqlMapGenerator targetPackage="pwd.allen.dao"  targetProject="./src/main/resources">
+        <sqlMapGenerator targetPackage="pwd.allen.dao"  targetProject="${user.home}/Desktop/generate-by-mb">
             <property name="enableSubPackages" value="true" />
         </sqlMapGenerator>
 
@@ -56,7 +56,7 @@
             type="MIXEDMAPPER",生成基于注解的Java Model和相应的Mapper对象
             type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口
          -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="pwd.allen.dao"  targetProject="./src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="pwd.allen.dao"  targetProject="${user.home}/Desktop/generate-by-mb">
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 

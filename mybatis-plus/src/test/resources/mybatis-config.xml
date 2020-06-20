@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- 属性优先级 方法参数传递的Properties > resource属性指定的文件 > <property>标签指定的属性 -->
+    <properties resource="dbconfig.properties">
+        <!-- 开启占位符指定默认值，默认是关闭的 -->
+        <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/>
+        <property name="org.apache.ibatis.parsing.PropertyParser.default-value-separator" value=":"/>
+    </properties>
+
+    <settings>
+        <!--开启驼峰命名自动转换 默认为false-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+<!--        当没有为参数指定特定的 JDBC 类型时，空值的默认 JDBC 类型；常用值：NULL、VARCHAR 或 OTHER-->
+        <setting name="jdbcTypeForNull" value="OTHER"/>
+<!--        延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。默认false-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+<!--        开启时，任一方法的调用都会加载该对象的所有延迟加载属性。 否则，每个延迟加载属性会按需加载（只按照 lazyLoadTriggerMethods 属性 指定的方法)。默认false-->
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <!-- 指定 MyBatis 应如何自动映射列到字段或属性。
+            NONE 表示取消自动映射
+            PARTIAL 只会自动映射没有定义嵌套结果集映射的结果集
+            FULL 会自动映射任意复杂的结果集（无论是否嵌套）。
+        -->
+        <setting name="autoMappingBehavior" value="FULL"/>
+        <!-- 结果集为null时也进行赋值 -->
+        <setting name="callSettersOnNulls" value="true"/>
+        <!-- 开启二级缓存 -->
+        <setting name="cacheEnabled" value="true"/>
+        <!--设置超时时间，它决定数据库驱动等待数据库响应的秒数
+            设置为5时，测试更新被锁的行，5s后抛异常：com.mysql.jdbc.exceptions.MySQLTimeoutException: Statement cancelled due to timeout or client request-->
+        <setting name="defaultStatementTimeout" value="25"/>
+    </settings>
+
+    <typeAliases>
+        <!--
+        别名处理器：为某个java类型起别名，不区分大小写
+            type:指定要起别名的类型全类名；默认别名就是类名小写
+            alias:指定新的别名
+        mybatis 自带的别名 源码：org.apache.ibatis.type.TypeAliasRegistry
+         -->
+        <!--<typeAlias type="pwd.allen.entity.User"></typeAlias>-->
+
+        <!--
+        为某个包及子包下的所有类批量起别名，默认类名小写
+        通过@Alias注释类可以指定新的别名，从而避免重名
+         -->
+        <package name="pwd.allen.entity"></package>
+    </typeAliases>
+
+    <environments default="mysql">
+
+        <environment id="oracle">
+            <transactionManager type="JDBC"></transactionManager>
+            <!-- type可选值：UNPOOLED POOLED JNDI
+            POOLED 是 org.apache.ibatis.datasource.pooled.PooledDataSourceFactory 的别名-->
+            <dataSource type="POOLED">
+                <property name="driver" value="${oracle.driver}"/>
+                <property name="url" value="${oracle.url}"/>
+                <property name="username" value="${oracle.username}"/>
+                <property name="password" value="${oracle.password}"/>
+            </dataSource>
+        </environment>
+
+        <environment id="mysql">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+
+    <!--DB_VENDOR指的是org.apache.ibatis.mapping.VendorDatabaseIdProvider，根据DatabaseMetaData#getDatabaseProductName()获取databaseId-->
+    <databaseIdProvider type="DB_VENDOR">
+        <property name="SQL Server" value="sqlserver"/>
+        <property name="DB2" value="db2"/>
+        <property name="Oracle" value="oracle" />
+        <property name="MySQL" value="mysql" />
+    </databaseIdProvider>
+    
+    <mappers>
+        <!--使用相对于类路径的资源引用-->
+<!--        <mapper resource="pwd/allen/dao/UserDao.xml"/>-->
+        <!--使用映射器接口实现类的完全限定类名-->
+<!--        <mapper class="pwd.allen.dao.UserDaoAnnotation"/>-->
+        <package name="pwd.allen.mapper"/>
+    </mappers>
+</configuration>
