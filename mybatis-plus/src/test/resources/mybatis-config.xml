@@ -51,6 +51,10 @@
         <package name="pwd.allen.entity"></package>
     </typeAliases>
 
+    <typeHandlers>
+        <typeHandler handler="com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler" javaType="pwd.allen.enums.StatusEnum"/>
+    </typeHandlers>
+
     <environments default="mysql">
 
         <environment id="oracle">
@@ -87,7 +91,7 @@
     
     <mappers>
         <!--使用相对于类路径的资源引用-->
-<!--        <mapper resource="pwd/allen/dao/UserDao.xml"/>-->
+        <mapper resource="mapper/pwd/allen/mapper/UserMapper.xml"/>
         <!--使用映射器接口实现类的完全限定类名-->
 <!--        <mapper class="pwd.allen.dao.UserDaoAnnotation"/>-->
         <package name="pwd.allen.mapper"/>

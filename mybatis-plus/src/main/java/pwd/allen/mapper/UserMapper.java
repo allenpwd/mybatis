@@ -8,4 +8,6 @@ import pwd.allen.entity.User;
  * @create 2020-06-16 22:18
  **/
 public interface UserMapper extends BaseMapper<User> {
+
+    public User getUserWithDept(Integer id);
 }

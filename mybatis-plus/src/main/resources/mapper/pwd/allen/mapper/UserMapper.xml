@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pwd.allen.mapper.UserMapper">
+
+
+    <!-- 联合查询
+    方式1 property写级联属性如dept.id
+    方式2 用<association>
+     -->
+    <resultMap id="MyMap" type="pwd.allen.entity.User">
+        <association property="dept" javaType="pwd.allen.entity.Department">
+            <id column="dept_id" property="id"/>
+            <result column="dept_name" property="deptName"/>
+        </association>
+    </resultMap>
+    <select id="getUserWithDept" resultMap="MyMap">
+    select du.*, dd.dept_name
+    from db_user du left join db_dept dd on dd.id=du.dept_id where du.id=#{id}
+    </select>
+
+</mapper>

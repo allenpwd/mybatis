@@ -6,14 +6,14 @@ spring:
 #    data: classpath:sql/mysql.sql
     url: jdbc:mysql://localhost:3307/test?useUnicode=true&characterEncoding=utf8&useAffectedRows=true&noAccessToProcedureBodies=true
     username: root
-    password: 123456
+    password: 123
 
 
 #配置枚举 支持通配符 * 或者 ; 分割
 mybatis-plus:
   type-enums-package: pwd.allen.enums
-  configuration:
-    configuration
+  mapper-locations:
+    - classpath*:/mapper/**/*.xml #默认是这个位置
 
 logging:
   level:

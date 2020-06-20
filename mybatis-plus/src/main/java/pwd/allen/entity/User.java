@@ -22,20 +22,21 @@ public class User {
      *  id:字段名
      *  type:主键类型
      *      ASSIGN_ID：分配ID(主键类型为Number(Long和Integer)或String)(since 3.3.0),使用接口IdentifierGenerator的方法nextId
-     *      AUTO：数据库ID自增
+     *      AUTO：数据库ID自增，好像即使手动设置id也不会传
      */
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String userName;
     private int age;
     private StatusEnum status;
+    private Integer deptId;
     private Date createAt;
 
     /**
      * 字段注解(非主键)
      *  value：数据库字段名
      */
-    @TableField(value = "dept_id")
+    @TableField(exist = false)
     private Department dept;
     private byte[] msg;
 }

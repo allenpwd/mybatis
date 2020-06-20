@@ -19,6 +19,10 @@ import java.util.Properties;
  **/
 public class GenerateCode {
 
+    /**
+     * 根据db_user、db_department两张表生成代码到桌面/generate-by-mp/
+     * @throws IOException
+     */
     @Test
     public void one() throws IOException {
         // 代码生成器
