@@ -10,6 +10,7 @@
 - SqlSource：负责根据用户传递的parameterObject，动态地生成SQL语句，将信息封装到BoundSql对象中，并返回
 - BoundSql：表示动态生成的SQL语句以及相应的参数信息
 - Configuration：MyBatis所有的配置信息都维持在Configuration对象之中。
+- MapperBuilderAssistant：用于缓存、sql参数、查询返回的结果集处理
 
 ### 官方文档
 https://mybatis.org/mybatis-3/zh/configuration.html#properties

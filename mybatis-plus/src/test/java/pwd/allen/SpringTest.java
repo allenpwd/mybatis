@@ -1,6 +1,7 @@
 package pwd.allen;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,34 @@ public class SpringTest {
 
     @Test
     public void testGetList() {
+        //方法一
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
 //        queryWrapper.eq("id", 1);
         queryWrapper.like("user_name", "mybatis-plus");
         List<User> userList = userService.list(queryWrapper);
         System.out.println(userList);
+        //方法二
+        userList = userService.query()
+                .like("user_name", "mybatis-plus").list();
+        //方法三
+        userList = userService.lambdaQuery()
+                .like(User::getUserName, "mybatis-plus").list();
 
         // 使用转换函数，TODO 为何是整型的，怎么拿到其他属性
         List<String> idList = userService.listObjs(queryWrapper, o -> {
             return "id=" + o;
         });
         System.out.println(idList);
+    }
+
+    @Test
+    public void page() {
+        Page<User> page = new Page<>();
+        page.setCurrent(1);
+        page.setSize(2);
+        page.setSearchCount(false);
+        Page<User> userPage = userService.page(page);
+        System.out.println(userPage.getRecords());
     }
 
 

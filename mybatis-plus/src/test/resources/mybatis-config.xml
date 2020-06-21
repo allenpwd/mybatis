@@ -55,6 +55,10 @@
         <typeHandler handler="com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler" javaType="pwd.allen.enums.StatusEnum"/>
     </typeHandlers>
 
+    <plugins>
+        <plugin interceptor="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor"/>
+    </plugins>
+
     <environments default="mysql">
 
         <environment id="oracle">

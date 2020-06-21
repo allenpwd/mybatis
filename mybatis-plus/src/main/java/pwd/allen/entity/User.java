@@ -1,9 +1,7 @@
 package pwd.allen.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import pwd.allen.enums.StatusEnum;
 
@@ -15,7 +13,7 @@ import java.util.Date;
  **/
 @TableName("db_user")
 @Data
-public class User {
+public class User extends Model<User> {
 
     /**
      * 标注主键
@@ -24,10 +22,11 @@ public class User {
      *      ASSIGN_ID：分配ID(主键类型为Number(Long和Integer)或String)(since 3.3.0),使用接口IdentifierGenerator的方法nextId
      *      AUTO：数据库ID自增，好像即使手动设置id也不会传
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
     private Integer id;
     private String userName;
-    private int age;
+    @TableField(updateStrategy = FieldStrategy.IGNORED) //为空时也更新到数据库
+    private Integer age;
     private StatusEnum status;
     private Integer deptId;
     private Date createAt;
@@ -38,5 +37,6 @@ public class User {
      */
     @TableField(exist = false)
     private Department dept;
+    @TableField(fill = FieldFill.INSERT_UPDATE) //插入或者更新都直接填充并传到数据库，判断优先级比 {@link FieldStrategy} 高
     private byte[] msg;
 }
