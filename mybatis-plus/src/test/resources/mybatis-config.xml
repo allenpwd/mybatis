@@ -55,6 +55,7 @@
         <typeHandler handler="com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler" javaType="pwd.allen.enums.StatusEnum"/>
     </typeHandlers>
 
+    <!--加入分页插件，提供对Page的支持-->
     <plugins>
         <plugin interceptor="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor"/>
     </plugins>

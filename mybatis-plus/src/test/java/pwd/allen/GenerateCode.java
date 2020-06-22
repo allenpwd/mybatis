@@ -1,5 +1,6 @@
 package pwd.allen;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -30,13 +31,17 @@ public class GenerateCode {
 
         //<editor-fold desc="配置GlobalConfig">
         GlobalConfig globalConfig = new GlobalConfig();
-//        globalConfig.setOutputDir(System.getProperty("user.dir") + "/src/main/java");
-        globalConfig.setOutputDir(System.getProperty("user.home") + "/Desktop/generate-by-mp");
-        globalConfig.setAuthor("pwd");
-        // 是否覆盖已有文件
-        globalConfig.setFileOverride(false);
-        // 是否打开输出目录
-        globalConfig.setOpen(false);
+        globalConfig.setOutputDir(System.getProperty("user.home") + "/Desktop/generate-by-mp")
+                .setAuthor("pwd")
+                .setActiveRecord(false) //实体类是否继承Model来支持AR
+                // 是否覆盖已有文件
+                .setFileOverride(true)
+                // 是否打开输出目录
+                .setOpen(false)
+                .setIdType(IdType.AUTO)
+                .setBaseColumnList(true) //是否在xml中产生BaseColumnList
+                .setBaseResultMap(true)
+                .setServiceName("I%sService");
         mpg.setGlobalConfig(globalConfig);
         //</editor-fold>
 
@@ -51,11 +56,14 @@ public class GenerateCode {
         mpg.setDataSource(dataSourceConfig);
         //</editor-fold>
 
-        // 包配置
+        //<editor-fold desc="包配置">
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("generate");
-        pc.setParent("pwd.allen");
+        pc.setModuleName("generate")
+                .setParent("pwd.allen")
+                .setEntity("entity")
+                .setXml("mapper.xml");
         mpg.setPackageInfo(pc);
+        //</editor-fold>
 
         //<editor-fold desc="自定义代码模板">
         //指定自定义模板路径, 位置：/resources/templates/entity.java.ftl(或者是.vm)
@@ -88,26 +96,25 @@ public class GenerateCode {
         //</editor-fold>
 
 
-        // 策略配置 可指定需要生成哪些表或者排除哪些表
+        //<editor-fold desc="策略配置 可指定需要生成哪些表或者排除哪些表">
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setNaming(NamingStrategy.underline_to_camel);
-        // 默认按naming
-        strategy.setColumnNaming(NamingStrategy.underline_to_camel);
-        // 你自己的父类实体,没有就不用设置!
-//        strategy.setSuperEntityClass("pwd.allen.entity.BasicEntity");
-        // 写于父类中的公共字段
-//        strategy.setSuperEntityColumns("id");
-        strategy.setEntityLombokModel(true);
-        strategy.setRestControllerStyle(true);
-        // 公共父类
-//        strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
-        // 表名
-        strategy.setInclude("db_user", "db_department");
-        strategy.setControllerMappingHyphenStyle(true);
-        strategy.setTablePrefix(pc.getModuleName() + "_");
+        strategy.setCapitalMode(true) //全局大写命名
+                .setNaming(NamingStrategy.underline_to_camel)
+                .setColumnNaming(NamingStrategy.underline_to_camel) // 默认按naming
+//              .setSuperEntityClass("pwd.allen.entity.BasicEntity")// 你自己的父类实体,没有就不用设置!
+//              .setSuperEntityColumns("id")// 写于父类中的公共字段
+                .setEntityLombokModel(true)
+                .setTablePrefix(pc.getModuleName() + "_")  //TODO 这个有什么作用吗
+                .setRestControllerStyle(true)
+//              .setSuperControllerClass("你自己的父类控制器,没有就不用设置!") // 公共父类
+                .setInclude("db_user", "db_department")  //表名
+                .setControllerMappingHyphenStyle(true);
         mpg.setStrategy(strategy);
+        //</editor-fold>
+
         // 设置模版引擎，默认VelocityTemplateEngine
 //        mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+
         mpg.execute();
     }
 }
