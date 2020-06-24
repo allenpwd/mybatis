@@ -29,6 +29,7 @@ public class DebugTest {
 
         System.out.println(evaluator.evaluateBoolean("user.userName != null && user.userName.length() == 3", paramMap));
         System.out.println(evaluator.evaluateBoolean("list != null and list.size() > 0", paramMap));
+        System.out.println(evaluator.evaluateBoolean("user.userName == 'abc'", paramMap));      //旧版字符串要用双引号
         System.out.println(Ognl.getValue("user.userName", paramMap));
 
         System.out.println(Ognl.parseExpression("list != null && list.size() > 0"));
