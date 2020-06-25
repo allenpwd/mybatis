@@ -1,5 +1,6 @@
 package pwd.allen.mybatis.dao;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import pwd.allen.mybatis.entity.User;
 

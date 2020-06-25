@@ -18,6 +18,14 @@
     <select id="getUserWithDept" resultMap="MyMap">
     select du.*, dd.dept_name
     from db_user du left join db_dept dd on dd.id=du.dept_id where du.id=#{id}
+    -- 打印下全局变量myGlobal:${myGlobal}
+    </select>
+
+    <select id="selectByPage" resultType="pwd.allen.entity.User">
+        select * from db_user where 1=1
+        <if test="user != null and user.userName != null and user.userName != ''">
+            and user_name = #{user.userName}
+        </if>
     </select>
 
 </mapper>

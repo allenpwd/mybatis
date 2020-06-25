@@ -9,6 +9,8 @@
         <!-- 开启占位符指定默认值，默认是关闭的 -->
         <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/>
         <property name="org.apache.ibatis.parsing.PropertyParser.default-value-separator" value=":"/>
+        <!--自定义一个全局属性，可以在sql中用${}引用，但是不能用#{}引用-->
+        <property name="myGlobal" value="pwd"/>
     </properties>
 
     <settings>

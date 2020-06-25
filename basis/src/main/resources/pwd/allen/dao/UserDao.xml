@@ -24,6 +24,7 @@
 
     <select id="getById" resultType="pwd.allen.entity.User">
       select id, user_name, status, create_at, age, dept_id, msg from db_user where id = #{id}
+      -- 打印下全局变量myGlobal:${myGlobal}
     </select>
 
 <!--    这条select注释掉，因为改成了在Dao接口上以注解的方式配置-->

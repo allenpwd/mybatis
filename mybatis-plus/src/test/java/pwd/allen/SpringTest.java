@@ -58,6 +58,10 @@ public class SpringTest {
         System.out.println(idList);
     }
 
+    /**
+     * 分页测试
+     * 分页返回的对象与传入的对象是同一个
+     */
     @Test
     public void page() {
         Page<User> page = new Page<>();
@@ -65,7 +69,13 @@ public class SpringTest {
         page.setSize(2);
         page.setSearchCount(false);
         Page<User> userPage = userService.page(page);
-        System.out.println(userPage.getRecords());
+        System.out.println("总记录数：" + userPage.getTotal());
+        System.out.println("当前页：" + userPage.getCurrent());
+        System.out.println("每页记录数：" + userPage.getSize());
+        System.out.println("总页数：" + userPage.getPages());
+        System.out.println("是否有上一页：" + userPage.hasPrevious());
+        System.out.println("是否有下一页：" + userPage.hasNext());
+        System.out.println("记录：" + userPage.getRecords());
     }
 
 
