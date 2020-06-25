@@ -58,6 +58,8 @@
     <plugins>
         <!--加入分页插件，提供对Page的支持-->
         <plugin interceptor="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor"/>
+        <!--SQL执行分析插件，判断是否全表删除或者更新，TODO 新版的不知道怎么用，好像要借助 BlockAttackSqlParser-->
+        <plugin interceptor="com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor" />
     </plugins>
 
     <environments default="mysql">

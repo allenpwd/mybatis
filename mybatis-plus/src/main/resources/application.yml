@@ -9,11 +9,16 @@ spring:
     password: 123
 
 
-#配置枚举 支持通配符 * 或者 ; 分割
+
 mybatis-plus:
-  type-enums-package: pwd.allen.enums
+  type-enums-package: pwd.allen.enums #配置枚举 支持通配符 * 或者 ; 分割
   mapper-locations:
     - classpath*:/mapper/**/*.xml #默认是这个位置
+#  configuration-properties:
+#    myGlobal: pwd #设置全局属性方式一
+  configuration: #设置mybatis属性
+    variables:
+      myGlobal: pwd  ##设置全局属性方式二
 
 logging:
   level:

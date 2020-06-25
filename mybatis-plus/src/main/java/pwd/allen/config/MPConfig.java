@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import pwd.allen.handler.MyMetaObjectHandler;
 import pwd.allen.util.MyIdGenerator;
 
 import java.util.Properties;
@@ -44,5 +45,15 @@ public class MPConfig {
     public MybatisPlusPropertiesCustomizer plusPropertiesCustomizer() {
         // 使用MybatisPlusPropertiesCustomizer
         return plusProperties -> plusProperties.getGlobalConfig().setIdentifierGenerator(new MyIdGenerator());
+    }
+
+
+    /**
+     * 自定义公共字段填充处理器
+     * @return
+     */
+    @Bean
+    public MyMetaObjectHandler myMetaObjectHandler() {
+        return new MyMetaObjectHandler();
     }
 }
