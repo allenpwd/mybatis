@@ -18,15 +18,20 @@ CREATE TABLE "DB_USER"
 "CREATE_AT" TIMESTAMP (6),
 "DEPT_ID" NUMBER,
 "MSG" BLOB,
+"deleted" NUMBER,
  CONSTRAINT "SYS_C0022673" PRIMARY KEY ("ID"),
  CONSTRAINT "pk_user_dept" FOREIGN KEY ("DEPT_ID")
   REFERENCES "HR"."DB_DEPT" ("ID") ON DELETE SET NULL ENABLE
 )
 
 -- 自增序列
-create sequence USER_SEQ
+create sequence SEQ_USER
 increment by 1
-start with 1
+start with 1;
+
+create sequence SEQ_DEPT
+increment by 1
+start with 1;
 
 
 -- 存储过程：分页查询用户

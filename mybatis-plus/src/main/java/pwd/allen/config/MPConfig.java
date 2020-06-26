@@ -2,7 +2,9 @@ package pwd.allen.config;
 
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusPropertiesCustomizer;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.extension.incrementer.H2KeyGenerator;
+import com.baomidou.mybatisplus.extension.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import org.springframework.context.annotation.Bean;
@@ -55,5 +57,14 @@ public class MPConfig {
     @Bean
     public MyMetaObjectHandler myMetaObjectHandler() {
         return new MyMetaObjectHandler();
+    }
+
+    /**
+     * 配置oracle主键生成器
+     * @return
+     */
+//    @Bean
+    public IKeyGenerator keyGenerator() {
+        return new OracleKeyGenerator();
     }
 }

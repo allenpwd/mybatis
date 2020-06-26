@@ -37,6 +37,12 @@ public class User extends Model<User> {
      */
     @TableField(exist = false)
     private Department dept;
-    @TableField(fill = FieldFill.INSERT_UPDATE) //插入或者更新都直接填充并传到数据库，判断优先级比 {@link FieldStrategy} 高
+    @TableField(fill = FieldFill.INSERT_UPDATE) //插入或者更新都进行填充处理，需借助MetaObjectHandler，判断优先级比 {@link FieldStrategy} 高
     private byte[] msg;
+
+    /**
+     * 逻辑删除字段，null未删除 1已删除
+     */
+    @TableLogic(value = "null", delval = "1")
+    private int deleted;
 }

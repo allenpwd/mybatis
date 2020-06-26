@@ -1,12 +1,16 @@
 # DataSource Config
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
 #    schema: classpath:sql/mysql.sql
 #    data: classpath:sql/mysql.sql
+    driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3307/test?useUnicode=true&characterEncoding=utf8&useAffectedRows=true&noAccessToProcedureBodies=true
     username: root
     password: 123
+#    driver-class-name: oracle.jdbc.OracleDriver
+#    url: jdbc:oracle:thin:@localhost:1521:orcl
+#    username: hr
+#    password: 123456
 
 
 

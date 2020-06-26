@@ -12,7 +12,11 @@ import org.apache.ibatis.reflection.MetaObject;
 public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-
+        Object fieldValue = getFieldValByName("msg", metaObject);
+        if (fieldValue == null) {
+            System.out.println("******插入操作 满足填充条件*******");
+            strictInsertFill(metaObject, "msg", byte[].class, "默认填充值".getBytes());
+        }
     }
 
     @Override

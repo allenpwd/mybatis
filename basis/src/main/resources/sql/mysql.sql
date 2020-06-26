@@ -21,6 +21,7 @@ CREATE TABLE `db_user`  (
   `create_at` timestamp NULL DEFAULT NULL,
   `dept_id` int(11) NULL DEFAULT NULL,
   `msg` blob,
+  `deleted` tinyint(4) NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `pk_user_dept`(`dept_id`) USING BTREE,
   CONSTRAINT `pk_user_dept` FOREIGN KEY (`dept_id`) REFERENCES `db_dept` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT

@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import pwd.allen.entity.User;
+import pwd.allen.handler.MyMetaObjectHandler;
 import pwd.allen.mapper.UserMapper;
 import pwd.allen.util.MyIdGenerator;
 
@@ -37,9 +38,16 @@ public class UserTest {
     public void init() throws IOException {
         sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(Resources.getResourceAsStream("mybatis-config.xml"));
 
+        MybatisConfiguration configuration = (MybatisConfiguration) sqlSessionFactory.getConfiguration();
         // 自定义ID生成器
-        GlobalConfig globalConfig = ((MybatisConfiguration) sqlSessionFactory.getConfiguration()).getGlobalConfig();
+        GlobalConfig globalConfig = configuration.getGlobalConfig();
         globalConfig.setIdentifierGenerator(new MyIdGenerator());
+
+        // 设置全局逻辑删除值，没有效果，因为mapperStatement已经解析完了
+//        configuration.getGlobalConfig().getDbConfig().setLogicDeleteValue("1");
+//        configuration.getGlobalConfig().getDbConfig().setLogicNotDeleteValue(null);
+
+        globalConfig.setMetaObjectHandler(new MyMetaObjectHandler());
 
         sqlSession = sqlSessionFactory.openSession();
         userMapper = sqlSession.getMapper(UserMapper.class);
@@ -120,7 +128,12 @@ public class UserTest {
         System.out.println(userPage);
     }
 
+    /**
+     * 逻辑删除
+     * sql:UPDATE db_user SET deleted=1 WHERE id=? AND deleted=0
+     */
     @Test
-    public void wrapper() {
+    public void logicDelete() {
+        System.out.println(userMapper.deleteById(100));
     }
 }

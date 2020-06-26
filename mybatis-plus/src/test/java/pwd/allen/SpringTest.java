@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import pwd.allen.entity.Department;
 import pwd.allen.entity.User;
 import pwd.allen.mapper.UserMapper;
+import pwd.allen.service.IDeptService;
 import pwd.allen.service.IUserService;
 
 import java.util.ArrayList;
@@ -26,6 +28,9 @@ public class SpringTest {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IDeptService deptService;
 
     /**
      * 通过mapper.xml配置
@@ -97,5 +102,19 @@ public class SpringTest {
         }
         boolean b = userService.saveOrUpdateBatch(userList, 2);
         System.out.println(b);
+    }
+
+    /**
+     * 测试oracle序列作为主键
+     * 需要注入OracleKeyGenerator，在实体类上使用注解@KeySequence指定序列名，主键生成策略必须使用INPUT
+     * 效果：先查序列，然后插入id
+     */
+    @Test
+    public void oracleSeq() {
+        Department department = new Department();
+//        department.setId(101);
+        department.setDeptName("临时部");
+        boolean insert = deptService.save(department);
+        System.out.println(insert);
     }
 }
