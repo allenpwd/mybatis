@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import pwd.allen.entity.Department;
 import pwd.allen.entity.User;
+import pwd.allen.mapper.DeptMapper;
 import pwd.allen.mapper.UserMapper;
 import pwd.allen.service.IDeptService;
 import pwd.allen.service.IUserService;
@@ -31,6 +32,9 @@ public class SpringTest {
 
     @Autowired
     private IDeptService deptService;
+
+    @Autowired
+    private DeptMapper deptMapper;
 
     /**
      * 通过mapper.xml配置
@@ -83,6 +87,20 @@ public class SpringTest {
         System.out.println("记录：" + userPage.getRecords());
     }
 
+
+    /**
+     * 批量保存
+     * 如果不加@Transactional，事务不会回滚
+     */
+    @Test
+    public void insert() {
+        Department department = new Department();
+        department.setId(101);
+        department.setDeptName("测试插入");
+
+//        System.out.println(deptMapper.insert(department));  //事务不会回滚
+        System.out.println(deptService.save(department));   //事务也不会回滚
+    }
 
     /**
      * 批量保存
