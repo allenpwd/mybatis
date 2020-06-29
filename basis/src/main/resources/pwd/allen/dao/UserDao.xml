@@ -23,6 +23,13 @@
     <cache/>
 
     <select id="getById" resultType="pwd.allen.entity.User">
+      <!-- id=1时，如果没有配置全局的myGlobal，则myGlobal会被替换成动态绑定的值
+        猜想：sql初始化解析时，如果全局属性有配置，则${}会直接被文本替换；如果没有则包装成TextSqlNode，并在sql执行时从参数中解析
+       -->
+      <if test="id==1">
+          -- abc
+          <bind name="myGlobal" value="'动态绑定'" />
+      </if>
       select id, user_name, status, create_at, age, dept_id, msg from db_user where id = #{id}
       -- 打印下全局变量myGlobal:${myGlobal}
     </select>
