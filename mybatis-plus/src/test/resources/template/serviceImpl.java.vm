@@ -1,0 +1,53 @@
+package ${package.ServiceImpl};
+
+import ${package.Entity}.${entity};
+import ${package.Mapper}.${table.mapperName};
+import ${package.Service}.${table.serviceName};
+import ${superServiceImplClassPackage};
+import org.springframework.stereotype.Service;
+import com.cdc.common.orm.Pager;
+import com.cdc.common.orm.PagerUtils;
+import org.apache.ibatis.session.RowBounds;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * <p>
+ * $!{table.comment} 服务实现类
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Service
+#if(${kotlin})
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>(), ${table.serviceName} {
+
+}
+#else
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
+
+    private final static Logger log = Logger.getLogger(${table.serviceImplName}.class);
+
+    #set($uncap_mapperName = $table.mapperName.substring(1,2).toLowerCase() + $table.mapperName.substring(2))
+    @Autowired
+    private ${table.mapperName} ${uncap_mapperName};
+
+    @Autowired
+    public void setBaseDAO(${table.mapperName} dao) {
+        super.setBaseDAO(dao);
+    }
+
+    /**
+     * 分页查询
+     * @param pager
+     * @return
+     */
+    @Override
+    public Pager<${entity}> selectByPager(Pager<${entity}> pager) {
+        RowBounds rowBounds = new RowBounds(PagerUtils.getStart(pager), pager.getPageSize());
+        pager.setList(${uncap_mapperName}.selectByPager(pager, rowBounds));
+        return pager;
+    }
+}
+#end

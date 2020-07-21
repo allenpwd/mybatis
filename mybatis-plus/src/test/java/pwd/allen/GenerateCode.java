@@ -32,7 +32,7 @@ public class GenerateCode {
         //<editor-fold desc="配置GlobalConfig">
         GlobalConfig globalConfig = new GlobalConfig();
         globalConfig.setOutputDir(System.getProperty("user.home") + "/Desktop/generate-by-mp")
-                .setAuthor("pwd")
+                .setAuthor("pwdan")
                 .setActiveRecord(false) //实体类是否继承Model来支持AR
                 // 是否覆盖已有文件
                 .setFileOverride(true)
@@ -41,6 +41,7 @@ public class GenerateCode {
                 .setIdType(IdType.AUTO)
                 .setBaseColumnList(true) //是否在xml中产生BaseColumnList
                 .setBaseResultMap(true)
+                .setMapperName("I%sDao")
                 .setServiceName("I%sService");
         mpg.setGlobalConfig(globalConfig);
         //</editor-fold>
@@ -49,17 +50,17 @@ public class GenerateCode {
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         Properties properties = new Properties();
         properties.load(this.getClass().getClassLoader().getResourceAsStream("dbconfig.properties"));
-        dataSourceConfig.setUrl(properties.getProperty("jdbc.url"));
-        dataSourceConfig.setDriverName(properties.getProperty("jdbc.driver"));
-        dataSourceConfig.setUsername(properties.getProperty("jdbc.username"));
-        dataSourceConfig.setPassword(properties.getProperty("jdbc.password"));
+        dataSourceConfig.setUrl(properties.getProperty("oracle.url"));
+        dataSourceConfig.setDriverName(properties.getProperty("oracle.driver"));
+        dataSourceConfig.setUsername(properties.getProperty("oracle.username"));
+        dataSourceConfig.setPassword(properties.getProperty("oracle.password"));
         mpg.setDataSource(dataSourceConfig);
         //</editor-fold>
 
         //<editor-fold desc="包配置">
         PackageConfig pc = new PackageConfig();
         pc.setModuleName("generate")
-                .setParent("pwd.allen")
+                .setParent("com.cdc")
                 .setEntity("entity")
                 .setXml("mapper.xml");
         mpg.setPackageInfo(pc);
@@ -69,12 +70,12 @@ public class GenerateCode {
         //指定自定义模板路径, 位置：/resources/templates/entity.java.ftl(或者是.vm)
         //注意不要带上.ftl(或者是.vm), 会根据使用的模板引擎自动识别
         TemplateConfig templateConfig = new TemplateConfig()
-                .setEntity("/templates/entity.java")
-                .setController("/templates/controller.java")
-                .setService("/templates/service.java")
-                .setServiceImpl("/templates/serviceImpl.java")
-                .setMapper("/templates/mapper.java")
-                .setXml("/templates/mapper.xml");
+                .setEntity("/template/entity.java")
+                .setController("/template/controller.java")
+                .setService("/template/service.java")
+                .setServiceImpl("/template/serviceImpl.java")
+                .setMapper("/template/mapper.java")
+                .setXml("/template/mapper.xml");
         //配置自定义模板
         mpg.setTemplate(templateConfig);
         //</editor-fold>
@@ -86,7 +87,7 @@ public class GenerateCode {
             //在.ftl(或者是.vm)模板中，通过${cfg.abc}获取属性
             @Override
             public void initMap() {
-                Map<String, Object> map = new HashMap<>();
+                Map<String, Object> map = new HashMap<String, Object>();
                 map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
                 this.setMap(map);
             }
@@ -103,11 +104,16 @@ public class GenerateCode {
                 .setColumnNaming(NamingStrategy.underline_to_camel) // 默认按naming
 //              .setSuperEntityClass("pwd.allen.entity.BasicEntity")// 你自己的父类实体,没有就不用设置!
 //              .setSuperEntityColumns("id")// 写于父类中的公共字段
-                .setEntityLombokModel(true)
-                .setTablePrefix(pc.getModuleName() + "_")  //TODO 这个有什么作用吗
+                .setSuperMapperClass("com.cdc.common.dao.IBaseDAO")
+                .setSuperServiceClass("com.cdc.common.service.IBaseService")
+                .setSuperServiceImplClass("com.cdc.common.service.impl.AbstractService")
+                .setSuperControllerClass("com.cdc.api.apiCommon.baseController.BasicController")
+                .setRestControllerStyle(true)
+                .setEntityLombokModel(false)
+                .setTablePrefix("PUB_")  //TODO 这个有什么作用吗
                 .setRestControllerStyle(true)
 //              .setSuperControllerClass("你自己的父类控制器,没有就不用设置!") // 公共父类
-                .setInclude("db_user", "db_department")  //表名
+                .setInclude("PUB_SUPERVISION", "PUB_SUPERVISION_GROUP", "PUB_SUPERVISION_GROUP_MEMBER", "PUB_SUPERVISION_DETAIL")  //表名
                 .setControllerMappingHyphenStyle(true);
         mpg.setStrategy(strategy);
         //</editor-fold>

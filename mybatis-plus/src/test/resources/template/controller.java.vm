@@ -1,0 +1,83 @@
+package ${package.Controller};
+
+
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+import com.cdc.entity.sys.SYSUsers;
+import org.apache.log4j.Logger;
+import ${package.Service}.${table.serviceName};
+import ${package.Entity}.${entity};
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * <p>
+ * $!{table.comment} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${restControllerStyle})
+@RestController
+#else
+@Controller
+#end
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
+#if(${kotlin})
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
+#else
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+
+    private final static Logger log = Logger.getLogger(${table.controllerName}.class);
+    private static final UUIDHexGenerator ID_GENERATOR = new UUIDHexGenerator();
+
+    #set($uncap_serviceName = $table.serviceName.substring(1,2).toLowerCase() + $table.serviceName.substring(2))
+    @Autowired
+    private ${table.serviceImplName} ${uncap_serviceName};
+
+    /**
+     * 分页查询
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "/list", method = {RequestMethod.GET, RequestMethod.POST})
+    public Object list(HttpServletRequest request, HttpServletResponse response) {
+        SYSUsers user = resolutionToken(request);
+        if (user == null) {
+            return new ReturnMessBody(ConstantUtil.TOLOGIN, "token失效", null);
+        }
+        if (StringUtils.isEmpty(user.getRoleCode()) || StringUtils.isEmpty(user.getId())) {
+            return new ReturnMessBody(ConstantUtil.TOLOGIN, "token失效", null);
+        }
+        try {
+            Map<String, Object> paramMap = (Map<String, Object>) request.getAttribute("data");
+            Pager pager = new Pager();
+            pager.setPageNumber(paramMap.containsKey("pageNumber") ? Integer.valueOf(paramMap.get("pageNumber").toString()) : 1);
+            pager.setPageSize(paramMap.containsKey("pageSize") ? Integer.valueOf(paramMap.get("pageSize").toString()) : 10);
+            pager.setParameters(paramMap);
+            Pager result = ${uncap_serviceName}.selectByPager(pager);
+            paramMap.clear();
+            data.put("total", result.getTotal());
+            data.put("rows", result.getList());
+            return new ReturnMessBody(ConstantUtil.SUCCESS, "查询成功", data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e);
+            return new ReturnMessBody(ConstantUtil.ERROR, e.getMessage(), e.getMessage());
+        }
+    }
+
+}
+
+#end

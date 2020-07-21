@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package.Mapper}.${table.mapperName}">
+
+#if(${enableCache})
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+#end
+#if(${baseResultMap})
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+#foreach($field in ${table.fields})
+        <id column="${field.name}" property="${field.propertyName}" />
+#end
+    </resultMap>
+
+#end
+#if(${baseColumnList})
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+#foreach($field in ${table.commonFields})
+        ${field.columnName},
+#end
+        ${table.fieldNames}
+    </sql>
+
+#end
+
+    <!-- 查询条件 -->
+    <sql id="Example_Where_Clause">
+        where 1=1
+        <trim suffixOverrides=",">
+#foreach($field in ${table.fields})
+    #if(!${field.keyFlag})##生成普通字段
+            <if test="parameters.${field.propertyName} != null and parameters.${field.propertyName} != ''">
+                and ${field.name} = #{parameters.${field.propertyName}}
+            </if>
+    #end
+#end
+        </trim>
+    </sql>
+
+    <!-- 插入记录 -->
+    <insert id="insert" parameterType="${package.Entity}.${entity}">
+      insert into ${table.name}(${table.fieldNames})
+      values(#foreach($field in ${table.fields})#{${field.propertyName},jdbcType=#if(${field.propertyType}=='LocalDateTime')TIMESTAMP#elseif(${field.propertyType}=='BigDecimal')INTEGER#else VARCHAR#end},#end)
+    </insert>
+
+    <!-- 修改记录，只修改只不为空的字段 -->
+    <update id="update" parameterType="${package.Entity}.${entity}">
+        update ${table.name} set
+        <trim suffixOverrides="," >
+        #foreach($field in ${table.fields})
+            #if(!${field.keyFlag})##生成普通字段
+                <if test="parameters.${field.propertyName} != null and parameters.${field.propertyName} != ''">
+                    ${field.name} = #{parameters.${field.propertyName}},
+                </if>
+            #end
+        #end
+        </trim>
+    </update>
+
+    <!-- 删除记录 -->
+    <delete id="delete" parameterType="Object">
+	  delete from ${table.name} id = #{id}
+    </delete>
+
+    <!-- 根据id查询 -->
+    <select id="getById"  resultMap="BaseResultMap" parameterType="Object">
+        select <include refid="Base_Column_List" />
+        from ${table.name} where id = #{id}
+    </select>
+
+    <!-- 查询列表 -->
+    <select id="selectByPager" resultMap="BaseResultMap"  parameterType="Pager">
+        SELECT <include refid="Base_Column_List" /> from ${table.name}
+        <include refid="Example_Where_Clause"/>
+    </select>
+
+    <!-- 权限控制代码块 -->
+    <sql id="autherizon">
+        and
+        (
+        CREATOR_ID = #{parameters.userId }
+        or PROJECT_MANAGER_ID = #{parameters.userId }
+        <if test="parameters.companyIds != null">
+            or COMPANY_ID in
+            <foreach collection="parameters.companyIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="parameters.orgIds != null">
+            or creator_dept_id in
+            <foreach collection="parameters.orgIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        or (
+        id in (
+        select id from PUB_GUIDANCE_MANUAL
+        <where>
+            <bind name="actorLike" value="'%' + parameters.userId + '%'"/>
+            flow_his_actor like #{actorLike}
+        </where>
+        )
+        )
+        )
+        and (invalid is null or invalid != '1')
+    </sql>
+
+</mapper>

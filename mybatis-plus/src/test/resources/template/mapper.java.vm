@@ -1,0 +1,31 @@
+package ${package.Mapper};
+
+import ${package.Entity}.${entity};
+import ${superMapperClassPackage};
+import com.cdc.common.orm.Pager;
+import org.apache.ibatis.session.RowBounds;
+import java.util.*;
+
+/**
+ * <p>
+ * $!{table.comment} Mapper 接口
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${kotlin})
+interface ${table.mapperName} : ${superMapperClass}<${entity}>
+#else
+public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
+
+    /**
+     * 分页查询
+     * @param pager
+     * @param rowBounds
+     * @return
+     */
+    List<Supervision> selectByPager(Pager<${entity}> pager, RowBounds rowBounds);
+
+}
+#end
