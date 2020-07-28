@@ -41,6 +41,9 @@ public interface UserDao {
 
     public Integer insertOrUpdateUserBatsh(List<User> list);
 
+    public int updateBatch(List<User> list);
+    public int updateBatch2(List<User> list);
+
     public List<User> getUsersByDeptId(Integer deptId);
 
     public Integer addUser(User user);

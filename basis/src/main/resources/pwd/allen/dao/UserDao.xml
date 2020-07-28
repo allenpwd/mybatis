@@ -149,38 +149,138 @@
         <selectKey keyProperty="id" order="BEFORE" resultType="int">
             select USER_SEQ.nextval from dual
         </selectKey>
-        insert into pwd_user(id, name, age, status, createdate, did)
-        values(#{id}, #{userName,jdbcType=NULL}, #{age}, #{status},#{createAt}, #{dept.id})
+        insert into pwd_user(id, user_name, age, status, create_at, dept_id)
+        values(#{id}, #{userName,jdbcType=VARCHAR}, #{age}, #{status},#{createAt}, #{dept.id,jdbcType=VARCHAR})
     </insert>
 
     <!-- 插入或者更新 -->
     <insert id="insertOrUpdateUser" databaseId="mysql">
         insert into db_user(id, user_name, age, status, dept_id,create_at)
-        values(#{id}, #{userName}, #{age}, #{status}, #{dept.id}, #{createAt})
+        values(#{id}, #{userName}, #{age}, #{status}, #{dept.id,jdbcType=VARCHAR}, #{createAt})
         on DUPLICATE KEY UPDATE user_name=VALUES(user_name),age=VALUES(age),status=VALUES(status),dept_id=VALUES(dept_id);
     </insert>
     <!-- 插入或者更新 -->
     <insert id="insertOrUpdateUser" databaseId="oracle">
         MERGE INTO db_user T1
-            USING (SELECT #{id} id, #{userName} user_name, #{age} age, #{status} status, #{dept.id} dept_id, #{createAt} create_at FROM dual) T2
-            ON ( T1.a=T2.a)
+        USING
+        (
+            SELECT #{id} id, #{userName} user_name, #{age} age, #{status} status, #{dept.id,jdbcType=VARCHAR} dept_id, #{createAt} create_at, #{msg} msg FROM dual
+        ) T2 ON ( T1.id=T2.id)
         WHEN MATCHED THEN
-            UPDATE SET T1.user_name = T2.use_name
+            UPDATE SET T1.user_name = T2.user_name
                 , T1.age = T2.age
                 , T1.status = T2.status
                 , T1.dept_id = T2.dept_id
+                , T1.msg = T2.msg
         WHEN NOT MATCHED THEN
-            INSERT (id, user_name, age, status, dept_id,create_at) values(T1.id, T1.user_uame, T1.age, T1.status, T1.dept_id, T1.create_at)
+            INSERT (id, user_name, age, status, dept_id,create_at,msg) values(T2.id, T2.user_name, T2.age, T2.status, T2.dept_id, T2.create_at, T2.msg)
     </insert>
 
     <!-- 批量插入或者更新 -->
-    <insert id="insertOrUpdateUserBatsh">
+    <insert id="insertOrUpdateUserBatsh" databaseId="mysql">
         insert into db_user(id, user_name, age, status, dept_id,create_at) values
         <foreach collection="list" item="item" separator=",">
             (#{item.id}, #{item.userName}, #{item.age}, #{item.status}, #{item.dept.id}, #{item.createAt,jdbcType=TIMESTAMP})
         </foreach>
         on DUPLICATE KEY UPDATE user_name=VALUES(user_name),age=VALUES(age),status=VALUES(status),dept_id=VALUES(dept_id);
     </insert>
+
+    <!-- 批量插入或者更新
+        1、在update子句中的字段，不可以出现在on子句的条件中
+        2、update和insert子句中可以不用写tablename，系统将使用merg into 后的tablename
+        3、在一个同时存在Insert和Update语法的Merge语句中，总共Insert/Update的记录数，就是Using语句中alias2的记录数
+     -->
+    <insert id="insertOrUpdateUserBatsh" databaseId="oracle">
+        MERGE INTO db_user T1
+        USING
+        (
+        <foreach collection="list" item="item" separator="union all">
+            SELECT #{item.id} id, #{item.userName} user_name, #{item.age} age, #{item.status} status, #{item.dept.id,jdbcType=VARCHAR} dept_id, #{item.createAt} create_at, #{item.msg} msg FROM dual
+        </foreach>
+        ) T2 ON ( T1.id=T2.id)
+        WHEN MATCHED THEN
+        UPDATE SET T1.user_name = T2.user_name
+        , T1.age = T2.age
+        , T1.status = T2.status
+        , T1.dept_id = T2.dept_id
+        , T1.msg = T2.msg
+        WHEN NOT MATCHED THEN
+        INSERT (id, user_name, age, status, dept_id,create_at, msg) values(T2.id, T2.user_name, T2.age, T2.status, T2.dept_id, T2.create_at, T2.msg)
+    </insert>
+
+    <!-- 批量更新方法一 -->
+    <update id="updateBatch" databaseId="oracle">
+        update db_user
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="user_name =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.userName!=null">
+                        when id=#{item.id}
+                        then #{item.userName}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="dept_id =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.dept!=null and item.dept.id!=null">
+                        when id=#{item.id}
+                        then #{item.dept.id}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="age =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.age!=null">
+                        when id=#{item.id}
+                        then #{item.age}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="msg =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.msg!=null">
+                        when id=#{item.id}
+                        then #{item.msg}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="status =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.status!=null">
+                        when id=#{item.id}
+                        then #{item.status}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <!-- 批量更新方法二 -->
+    <update id="updateBatch2" parameterType="List">
+        <foreach collection="list" item="item" open="begin" close=";end;" separator=";">
+            update DB_USER
+            <set>
+                <if test="item.userName != null and item.userName != ''">
+                    user_name=#{item.userName},
+                </if>
+                <if test="item.age != null">
+                    age=#{item.age},
+                </if>
+                <if test="item.msg != null">
+                    msg=#{item.msg},
+                </if>
+                <if test="item.status != null">
+                    status=#{item.status}
+                </if>
+            </set>
+            where id=#{item.id}
+        </foreach>
+    </update>
+
 
     <!-- public void getPageByProcedure();
 	1、使用select标签定义调用存储过程

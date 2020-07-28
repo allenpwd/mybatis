@@ -231,14 +231,40 @@ public class UserTest {
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         UserDao userDao = sqlSession.getMapper(UserDao.class);
         long mills = System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            User user = new User();
-            user.setCreateAt(new Date());
-            user.setAge(i + 100);
-            user.setUserName(UUID.randomUUID().toString().substring(0, 10));
-            Integer rel = userDao.addUser(user);
+
+        List<User> list = getData(1480, 5000);
+        for (User user : list) {
+            Integer rel = userDao.insertOrUpdateUser(user);
             System.out.println("rel=" + rel);
         }
+
+        sqlSession.commit();
+
+        log.info("耗时{}", System.currentTimeMillis() - mills);
+    }
+
+
+    /**
+     * 批量更新
+     */
+    @Test
+    public void updateBatch() {
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        long mills = System.currentTimeMillis();
+
+        List<User> list = getData(0, 5000);
+
+        int per = 1000;
+        int begin = 0;
+        while (begin < list.size()) {
+            int end = (begin + per) > list.size() ? list.size() : (begin + per);
+            userDao.updateBatch(list.subList(begin, end));// 耗时1857 耗时1931
+//            userDao.updateBatch2(list.subList(begin, end));// 耗时1429 耗时1395
+            begin = end;
+        }
+
+        sqlSession.commit();
+
         log.info("耗时{}", System.currentTimeMillis() - mills);
     }
 
@@ -251,23 +277,12 @@ public class UserTest {
         UserDao userDao = sqlSession.getMapper(UserDao.class);
         long mills = System.currentTimeMillis();
 
-        List<User> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            User user = new User();
-            user.setId(20 + i);
-            user.setCreateAt(new Date());
-            user.setAge(26);
-            user.setUserName(UUID.randomUUID().toString().substring(0, 10));
-            list.add(user);
-        }
-        list.add(list.get(0));
-        list.add(list.get(0));
+        List<User> list = getData(0, 500);
         userDao.insertOrUpdateUserBatsh(list);
 
-//        sqlSession.commit();
+        sqlSession.commit();
 
         log.info("耗时{}", System.currentTimeMillis() - mills);
-
     }
 
     /**
@@ -306,6 +321,22 @@ public class UserTest {
         if (rs.next()) {
             System.out.println(rs.getString("USER_NAME"));
         }
+    }
+
+    List<User> getData(int start, int num) {
+        Random random = new Random();
+        List<User> list = new ArrayList<>();
+        for (int i = 0; i < num; i++) {
+            User user = new User();
+            user.setId(start + i);
+            user.setCreateAt(new Date());
+            user.setAge(10 + random.nextInt(25));
+            user.setStatus(StatusEnum.ENABLED);
+            user.setMsg(UUID.randomUUID().toString().getBytes());
+            user.setUserName(UUID.randomUUID().toString().substring(0, 32));
+            list.add(user);
+        }
+        return list;
     }
 
 }
