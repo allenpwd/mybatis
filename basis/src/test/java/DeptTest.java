@@ -144,7 +144,11 @@ public class DeptTest {
 
 
     /**
-     * 查询时会对传参进行包装，List->list Collection->collection Array->array
+     * 查询时会对传参进行包装
+     *   类型和key对应关系：
+     *      List->list
+     *      Collection->collection
+     *      Array->array
      *   代码位置：org.apache.ibatis.session.defaults.DefaultSqlSession#wrapCollection(java.lang.Object)
      *
      * {@link org.apache.ibatis.scripting.xmltags.ForEachSqlNode}在取值时会把Array类型转成List去处理
