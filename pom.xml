@@ -55,6 +55,12 @@
             <artifactId>log4j-over-slf4j</artifactId>
             <version>1.7.25</version>
         </dependency>
+        <!-- spring使用jcl，换成slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.25</version>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
