@@ -74,8 +74,11 @@
         <plugin interceptor="pwd.allen.plugin.MyPlugin">
             <property name="name" value="allen"/>
         </plugin>
+        <plugin interceptor="pwd.allen.plugin.SlowSqlInterceptor">
+            <property name="limitMillis" value="10"/>
+        </plugin>
     </plugins>
-    <environments default="oracle">
+    <environments default="mysql">
 
         <environment id="oracle">
             <transactionManager type="JDBC"></transactionManager>
