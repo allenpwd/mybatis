@@ -2,7 +2,6 @@ package pwd.allen.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 import pwd.allen.entity.User;
 
@@ -10,7 +9,7 @@ import pwd.allen.entity.User;
  * @author 门那粒沙
  * @create 2020-06-16 22:18
  **/
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends CommonMapper<User> {
 
     /**
      * xml配置方式

@@ -43,6 +43,6 @@ public class User extends Model<User> {
     /**
      * 逻辑删除字段，null未删除 1已删除
      */
-    @TableLogic(value = "null", delval = "1")
-    private int deleted;
+//    @TableLogic(value = "null", delval = "1")
+//    private int deleted;
 }

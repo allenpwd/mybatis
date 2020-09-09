@@ -14,6 +14,6 @@ import pwd.allen.service.IUserService;
  * @create 2020-06-20 22:01
  **/
 @Service
-public class DeptService extends ServiceImpl<DeptMapper, Department> implements IDeptService {
+public class DeptService extends BaseService<DeptMapper, Department> implements IDeptService {
 
 }

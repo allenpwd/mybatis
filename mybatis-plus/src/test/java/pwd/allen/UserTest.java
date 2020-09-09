@@ -129,6 +129,22 @@ public class UserTest {
     }
 
     /**
+     * 分页查询
+     * 分页返回的对象与传入的对象是同一个
+     */
+    @Test
+    public void selectPageTwo() {
+        Page<User> userPage = new Page<>(1, 2, false);
+        userMapper.selectPage(userPage, null);
+        System.out.println(userPage.getRecords());
+
+
+        // 自定义的分页
+        userMapper.selectByPage(userPage, null);
+        System.out.println(userPage);
+    }
+
+    /**
      * 逻辑删除
      * sql:UPDATE db_user SET deleted=1 WHERE id=? AND deleted=0
      */

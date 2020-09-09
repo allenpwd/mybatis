@@ -1,6 +1,7 @@
 package pwd.allen;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +15,10 @@ import pwd.allen.mapper.DeptMapper;
 import pwd.allen.mapper.UserMapper;
 import pwd.allen.service.IDeptService;
 import pwd.allen.service.IUserService;
+import pwd.allen.util.Pager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -76,14 +79,35 @@ public class SpringTest {
         Page<User> page = new Page<>();
         page.setCurrent(1);
         page.setSize(2);
-        page.setSearchCount(false);
+//        page.setSearchCount(false); //是否查询总记录数
         Page<User> userPage = userService.page(page);
-        System.out.println("总记录数：" + userPage.getTotal());
         System.out.println("当前页：" + userPage.getCurrent());
         System.out.println("每页记录数：" + userPage.getSize());
+        System.out.println("记录：" + userPage.getRecords());
+
+        //以下几个如果设置了setSearchCount=false 则不会去查询
+        System.out.println("总记录数：" + userPage.getTotal());
         System.out.println("总页数：" + userPage.getPages());
         System.out.println("是否有上一页：" + userPage.hasPrevious());
         System.out.println("是否有下一页：" + userPage.hasNext());
+    }
+
+    /**
+     * 自定义的通用分页测试
+     * 分页返回的对象与传入的对象是同一个
+     */
+    @Test
+    public void pageTwo() {
+        Pager<User> pager = new Pager<>();
+        pager.setCurrent(1);
+        pager.setSize(2);
+        pager.setSearchCount(true);
+        pager.setParameters(Collections.singletonMap("userName", "一"));
+        IPage<User> userPage = userService.selectByPager(pager);
+        System.out.println("当前页：" + userPage.getCurrent());
+        System.out.println("每页记录数：" + userPage.getSize());
+        System.out.println("总记录数：" + userPage.getTotal());
+        System.out.println("总页数：" + userPage.getPages());
         System.out.println("记录：" + userPage.getRecords());
     }
 
