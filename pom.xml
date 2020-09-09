@@ -15,10 +15,6 @@
         <module>mybatis-plus</module>
     </modules>
 
-    <dependencyManagement>
-
-    </dependencyManagement>
-
     <dependencies>
 
         <!-- 数据库相关 -->
