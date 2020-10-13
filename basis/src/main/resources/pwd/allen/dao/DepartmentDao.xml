@@ -4,8 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pwd.allen.dao.DepartmentDao">
 
-    <resultMap id="deptMap" type="pwd.allen.entity.Department">
-        <id column="id" property="id"/>
+    <resultMap id="deptMap" type="pwd.allen.entity.Department" extends="pwd.allen.dao.CommonMybatisMapper.commonMap">
         <result column="dept_name" property="deptName"/>
     </resultMap>
 

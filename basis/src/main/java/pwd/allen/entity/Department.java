@@ -10,8 +10,7 @@ import java.util.List;
  * @create 2018-07-25 9:39
  **/
 @Data
-public class Department implements Serializable {
-    private Integer id;
+public class Department extends BaseEntity {
     private String deptName;
     private List<User> users;
 }

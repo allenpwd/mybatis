@@ -117,6 +117,7 @@
 <!--        <mapper resource="pwd/allen/dao/UserDao.xml"/>-->
         <!--使用映射器接口实现类的完全限定类名-->
 <!--        <mapper class="pwd.allen.dao.UserDaoAnnotation"/>-->
+        <mapper resource="pwd/allen/dao/common.xml"/>
         <package name="pwd.allen.dao"/>
     </mappers>
 </configuration>

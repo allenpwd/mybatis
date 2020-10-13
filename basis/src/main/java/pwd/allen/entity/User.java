@@ -1,6 +1,7 @@
 package pwd.allen.entity;
 
 import lombok.Data;
+import lombok.ToString;
 import org.apache.ibatis.type.Alias;
 import pwd.allen.util.StatusEnum;
 
@@ -13,12 +14,11 @@ import java.util.Date;
  * @create ${Year}-07-22 14:22
  **/
 @Data
-public class User implements Serializable {
-    private Integer id;
+@ToString(callSuper = true)
+public class User extends BaseEntity {
     private String userName;
     private int age;
     private StatusEnum status;
-    private Date createAt;
     private Department dept;
     private byte[] msg;
 }
