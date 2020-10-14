@@ -15,4 +15,8 @@
 ### 官方文档
 https://mybatis.org/mybatis-3/zh/configuration.html#properties
 
+## 问题
+### 设置了packeae扫描但是xml没有被加载
+xml文件名、xml文件的namespace路径要和包下的类一致
+
 

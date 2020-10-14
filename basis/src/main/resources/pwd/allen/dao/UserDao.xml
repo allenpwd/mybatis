@@ -19,7 +19,7 @@
      -->
     <cache/>
 
-    <select id="getById" resultType="pwd.allen.entity.User">
+    <select id="getById" resultMap="UserMap">
       <!-- id=1时，如果没有配置全局的myGlobal，则myGlobal会被替换成动态绑定的值
         猜想：sql初始化解析时，如果全局属性有配置，则${}会直接被文本替换；如果没有则包装成TextSqlNode，并在sql执行时从参数中解析
        -->
