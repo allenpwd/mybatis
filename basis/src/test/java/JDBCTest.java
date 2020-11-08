@@ -1,4 +1,8 @@
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.*;
@@ -10,33 +14,51 @@ import java.util.Properties;
  **/
 public class JDBCTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(JDBCTest.class);
+
+    private Connection connection;
+
+    @Before
+    public void init() throws IOException, SQLException {
+        Properties properties = new Properties();
+        properties.load(this.getClass().getClassLoader().getResourceAsStream("dbconfig.properties"));
+
+        // mysql
+        String url = properties.getProperty("jdbc.url");
+        String username = properties.getProperty("jdbc.username");
+        String password = properties.getProperty("jdbc.password");
+        // oracle
+//        url = properties.getProperty("oracle.url");
+//        username = properties.getProperty("oracle.username");
+//        password = properties.getProperty("oracle.password");
+
+        //可以省略，JDBC 4.0以后 DriverManager会加载并初始化jar里的Driver（SPI机制）
+//        Class.forName(properties.getProperty("jdbc.driver"));
+
+        // 获取连接
+        connection = DriverManager.getConnection(url, username, password);
+        logger.info("数据库名：{}", connection.getMetaData().getDatabaseProductName());
+        logger.info("数据库版本：{}   【{} {}】", connection.getMetaData().getDatabaseProductVersion()
+                , connection.getMetaData().getDatabaseMinorVersion()
+                , connection.getMetaData().getDatabaseMajorVersion());
+        logger.info("Driver：{}", connection.getMetaData().getDriverName());
+        logger.info("supportsTransactions：{}", connection.getMetaData().supportsTransactions());
+    }
+
+    @After
+    public void close() throws SQLException {
+        connection.close();
+    }
+
     /**
-     * 测试jdbc
+     * 测试查询
      *
      * @throws IOException
      * @throws SQLException
      */
     @Test
     public void one() throws IOException, SQLException {
-
-        Properties properties = new Properties();
-        properties.load(this.getClass().getClassLoader().getResourceAsStream("dbconfig.properties"));
-
-        //可以省略，JDBC 4.0以后 DriverManager会加载并初始化jar里的Driver（SPI机制）
-//        Class.forName(properties.getProperty("jdbc.driver"));
-
         String sql = "select * from db_user where id=?";
-
-        //<editor-fold desc="mysql">
-        //获取 mysql 连接
-        Connection connection = DriverManager.getConnection(properties.getProperty("jdbc.url")
-                , properties.getProperty("jdbc.username")
-                , properties.getProperty("jdbc.password"));
-        System.out.println("数据库名：" + connection.getMetaData().getDatabaseProductName());
-        System.out.println("数据库版本：" + connection.getMetaData().getDatabaseProductVersion()
-                + "   【" + connection.getMetaData().getDatabaseMinorVersion() + "  " + connection.getMetaData().getDatabaseMajorVersion() + "】");
-        System.out.println("Driver：" + connection.getMetaData().getDriverName());
-        System.out.println("supportsTransactions：" + connection.getMetaData().supportsTransactions());
 
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setInt(1, 1);
@@ -48,33 +70,28 @@ public class JDBCTest {
         }
         rs.close();
         ps.close();
-        connection.close();
-        //</editor-fold>
+    }
 
-        System.out.println("----------------------------------------------------------");
+    @Test
+    public void transcation() throws SQLException {
+        // 设置不自动提交，即开启事务
+        connection.setAutoCommit(false);
 
-        //<editor-fold desc="oracle">
-        //获取 oracle 连接
-        connection = DriverManager.getConnection(properties.getProperty("oracle.url")
-                , properties.getProperty("oracle.username")
-                , properties.getProperty("oracle.password"));
-        System.out.println("数据库名：" + connection.getMetaData().getDatabaseProductName());
-        System.out.println("数据库版本：" + connection.getMetaData().getDatabaseProductVersion()
-                + "   【" + connection.getMetaData().getDatabaseMinorVersion() + "  " + connection.getMetaData().getDatabaseMajorVersion() + "】");
-        System.out.println("Driver：" + connection.getMetaData().getDriverName());
-        System.out.println("supportsTransactions：" + connection.getMetaData().supportsTransactions());
+        String sql = "UPDATE db_user set user_name=? where id=?";
+        PreparedStatement pstmt = connection.prepareStatement(sql);
+        pstmt.setString(1, "测试回滚咯咯");
+        pstmt.setInt(2, 1);
+        logger.info("更新：{}", pstmt.executeUpdate());
 
-        ps = connection.prepareStatement(sql);
-        ps.setInt(1, 1);
-        rs = ps.executeQuery();
-        if (rs.next()) {
-            //大小写都可以
-            System.out.println(rs.getString("USER_NAME"));
-            System.out.println(rs.getString("create_at"));
+        try {
+            System.out.println(1 / 0);
+
+            // 提交
+            connection.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 回滚
+            connection.rollback();
         }
-        rs.close();
-        ps.close();
-        connection.close();
-        //</editor-fold>
     }
 }

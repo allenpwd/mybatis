@@ -20,9 +20,6 @@ public class SpringTest {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private UserDao userDao;
-
     @Test
     public void test() {
         User user = userService.getUser(1);
