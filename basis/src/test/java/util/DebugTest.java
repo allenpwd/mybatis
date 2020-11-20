@@ -26,6 +26,7 @@ public class DebugTest {
 
         User user = new User();
         user.setUserName("abc");
+        user.setAge(0);
         paramMap.put("user", user);
         paramMap.put("list", Arrays.asList("A", "B"));
 
@@ -35,5 +36,8 @@ public class DebugTest {
         System.out.println(Ognl.getValue("user.userName", paramMap));
 
         System.out.println(Ognl.parseExpression("list != null && list.size() > 0"));
+
+        // 如果整数类型是0，会被转成NULL
+        System.out.println(evaluator.evaluateBoolean("user.age != null and user.age != ''", paramMap));
     }
 }

@@ -339,4 +339,10 @@ public class UserTest {
         return list;
     }
 
+    @Test
+    public void deletetest() {
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        System.out.println(userDao.deleteTest(100, 101));
+    }
+
 }

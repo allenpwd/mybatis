@@ -60,4 +60,6 @@ public interface UserDao {
     public List<User> getPageByProcedure4Mysql(MyPage page);
 
     public int update(User user);
+
+    public int deleteTest(@Param("one")Integer one, @Param("two")Integer two);
 }
