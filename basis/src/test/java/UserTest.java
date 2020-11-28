@@ -103,6 +103,8 @@ public class UserTest {
 //        System.out.println(list);
 
 //        Map<Object, User> map = userDao.getsByAgeLtReturnMap(50);
+        // 旧版
+//        map = sqlSession.selectMap("pwd.allen.dao.UserDao.getsByAgeLtReturnMap", 50, "id");
 //        System.out.println(map);
 
         //association 直接关联出dept信息
@@ -316,7 +318,7 @@ public class UserTest {
         Connection connection = sqlSession.getConnection();
         String sql = "select * from db_user where user_NAME=?";
         PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, "潘伟丹");
+        ps.setString(1, "门那粒沙");
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             System.out.println(rs.getString("USER_NAME"));
@@ -339,6 +341,9 @@ public class UserTest {
         return list;
     }
 
+    /**
+     * 测试一个delete标签内放入多个delete语句
+     */
     @Test
     public void deletetest() {
         UserDao userDao = sqlSession.getMapper(UserDao.class);
