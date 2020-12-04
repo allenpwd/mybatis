@@ -51,7 +51,7 @@
     <update id="update" parameterType="pwd.allen.entity.User" timeout="5">
         update db_user
         <set>
-            <if test="userName != null and userName != ''">
+            <if test="@pwd.allen.util.MyUtil@isNotEmply(userName)">
                 user_name=#{userName},
             </if>
             <if test="createAt != null">
@@ -63,9 +63,9 @@
             <if test="dept != null and dept.id != null">
                 dept_id=#{dept.id},
             </if>
-<!--            <if test="msg != null">-->
-<!--                msg=#{msg,jdbcType=BLOB},-->
-<!--            </if>-->
+            <if test="msg != null">
+                msg=#{msg,jdbcType=BLOB},
+            </if>
         </set>
         where id=#{id}
     </update>

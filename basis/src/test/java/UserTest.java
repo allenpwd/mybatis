@@ -161,7 +161,7 @@ public class UserTest {
         user.setAge(21);
         user.setUserName("门那粒沙");
         user.setCreateAt(new Date());
-        user.setMsg("你好".getBytes("GBK"));
+        user.setMsg("你好abc".getBytes("GBK"));
 
         int rel = userDao.update(user);
 
