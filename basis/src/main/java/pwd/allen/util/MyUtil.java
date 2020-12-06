@@ -10,6 +10,8 @@ import java.util.Collection;
  **/
 public class MyUtil {
 
+    public static final Integer ZERO = 0;
+
     public static boolean isNotEmply(Object o) {
         if (o == null) {
             return false;
